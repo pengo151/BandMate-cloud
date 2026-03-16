@@ -362,20 +362,19 @@ def run_groove_cloud(genre, bpm, time_sig="4/4", structure=None, song_title="", 
 def stop_engine():
     global _engine_thread, _engine_stop
     _engine_stop.set()
-    if _engine_thread and _engine_thread.is_alive():
-        _engine_thread.join(timeout=2)
+    if _engine_thread is not None:
+        _engine_thread.kill()
+        _engine_thread = None
     _engine_stop = threading.Event()
     _status["playing"] = False
 
 def start_engine(genre, bpm, time_sig="4/4", structure=None, song_title="", feel=""):
     global _engine_thread
     stop_engine()
-    _engine_thread = threading.Thread(
-        target=run_groove_cloud,
-        args=(genre, float(bpm), time_sig, structure, song_title, feel, _engine_stop),
-        daemon=True,
+    _engine_thread = eventlet.spawn(
+        run_groove_cloud,
+        genre, float(bpm), time_sig, structure, song_title, feel, _engine_stop,
     )
-    _engine_thread.start()
 
 
 # ── Song lookup (same logic as Pi, using in-memory cache) ─────────────────────
