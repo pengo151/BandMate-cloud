@@ -628,6 +628,88 @@ def api_midi_info():
         }
     })
 
+# ── MuseScore search + pattern import ────────────────────────────────────────
+import urllib.request
+import urllib.parse
+import tempfile
+import sys
+sys.path.insert(0, os.path.dirname(__file__))
+
+@app.route("/api/scores/search", methods=["POST"])
+def api_scores_search():
+    data  = request.json or {}
+    query = (data.get("query") or "").strip()
+    if not query:
+        return jsonify({"error": "No query"}), 400
+
+    search_query = urllib.parse.quote(f"{query} drums")
+    results = [
+        {
+            "title":  f"{query} — Drum Score",
+            "url":    f"https://musescore.com/sheetmusic?text={search_query}&instrumentation=drumset",
+            "source": "MuseScore",
+            "note":   "Click to browse, download .mscz, then upload below",
+        },
+        {
+            "title":  f"{query} — Broader search",
+            "url":    f"https://musescore.com/sheetmusic?text={urllib.parse.quote(query)}",
+            "source": "MuseScore",
+            "note":   "Filter for scores with drum parts",
+        },
+    ]
+    return jsonify({
+        "query":   query,
+        "results": results,
+        "tip":     "Download the .mscz file from MuseScore, then upload it below.",
+    })
+
+
+@app.route("/api/patterns/import", methods=["POST"])
+def api_import_patterns():
+    try:
+        from musicxml_to_patterns import MusicXMLDrumParser, merge_into_library
+    except ImportError:
+        return jsonify({"error": "musicxml_to_patterns.py not found"}), 500
+
+    f = request.files.get("file")
+    if not f:
+        return jsonify({"error": "No file uploaded"}), 400
+
+    genre         = request.form.get("genre", "rock")
+    section       = request.form.get("section", "verse")
+    auto_sections = request.form.get("auto_sections", "true").lower() == "true"
+    replace       = request.form.get("replace", "false").lower() == "true"
+
+    suffix = Path(f.filename).suffix.lower() if f.filename else ".musicxml"
+    with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp:
+        f.save(tmp.name)
+        tmp_path = Path(tmp.name)
+
+    try:
+        parser   = MusicXMLDrumParser(tmp_path)
+        patterns = parser.parse(target_section=section, auto_sections=auto_sections)
+        if not patterns:
+            return jsonify({"error": "No drum patterns found — check file has a drum track"}), 400
+
+        global _song_cache
+        _song_cache[f"__imported_{genre}"] = {
+            "genre":    genre,
+            "title":    parser.title,
+            "patterns": patterns,
+        }
+
+        return jsonify({
+            "ok":       True,
+            "title":    parser.title,
+            "genre":    genre,
+            "sections": {k: len(v) for k, v in patterns.items()},
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        tmp_path.unlink(missing_ok=True)
+
+
 # ── PWA routes ────────────────────────────────────────────────────────────────
 @app.route("/manifest.json")
 def manifest():
