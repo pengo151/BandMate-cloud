@@ -495,7 +495,29 @@ def api_genre():
     genre = data.get("genre", "rock")
     bpm   = float(data.get("bpm", GENRES.get(genre, {}).get("bpm", 100)))
     ts    = data.get("time_sig", "4/4")
-    start_engine(genre=genre, bpm=bpm, time_sig=ts)
+
+    # Check if we have imported patterns for this genre
+    imported = _song_cache.get(f"__imported_{genre}")
+    if imported:
+        title    = imported.get("title", "Imported Score")
+        patterns = imported.get("patterns", {})
+        bpm      = imported.get("bpm", bpm)
+        ts       = imported.get("time_sig", ts)
+        # Build structure from imported sections
+        structure = []
+        for section, pats in patterns.items():
+            if pats:
+                structure.append({
+                    "section": section,
+                    "bars":    4,
+                    "pattern": pats[0],
+                })
+        start_engine(genre=genre, bpm=bpm, time_sig=ts,
+                     structure=structure if structure else None,
+                     song_title=title)
+    else:
+        start_engine(genre=genre, bpm=bpm, time_sig=ts)
+
     return jsonify({"ok": True, "genre": genre, "bpm": bpm})
 
 @app.route("/api/artist/browse", methods=["POST"])
