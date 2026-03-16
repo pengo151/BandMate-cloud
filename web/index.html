@@ -579,6 +579,7 @@ body{
   <div class="tab"         onclick="showTab('favs')">❤️ FAV</div>
   <div class="tab"         onclick="showTab('genre')">GENRE</div>
   <div class="tab"         onclick="showTab('looper')">LOOPER</div>
+  <div class="tab"         onclick="showTab('scores')">SCORES</div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════ PLAY TAB ══ -->
@@ -787,6 +788,54 @@ body{
   </div>
 </div>
 
+<div class="page" id="tab-scores">
+
+  <div class="np-section">
+    <div class="slabel">SEARCH MUSESCORE</div>
+    <div style="display:flex;gap:8px;margin-bottom:10px;">
+      <input id="scoresQuery" class="retro-select" style="flex:1;padding:10px;font-size:14px;"
+             placeholder="Song name e.g. Everlong" onkeydown="if(event.key==='Enter')searchScores()"/>
+      <div class="btn btn-primary btn-sm" onclick="searchScores()">FIND</div>
+    </div>
+    <div id="scoresResults"></div>
+  </div>
+
+  <div class="np-section" style="margin-top:12px;">
+    <div class="slabel">IMPORT DRUM SCORE (.mscz / .musicxml)</div>
+    <div style="margin-bottom:8px;color:var(--muted);font-size:11px;">
+      Download .mscz from MuseScore, then upload it here to load drum patterns.
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
+      <select id="importGenre" class="retro-select" style="flex:1;">
+        <option value="rock">ROCK</option>
+        <option value="metal">METAL</option>
+        <option value="funk">FUNK</option>
+        <option value="jazz">JAZZ</option>
+        <option value="blues">BLUES</option>
+        <option value="hiphop">HIP HOP</option>
+        <option value="trap">TRAP</option>
+        <option value="house">HOUSE</option>
+        <option value="pop">POP</option>
+        <option value="reggae">REGGAE</option>
+        <option value="dub">DUB</option>
+        <option value="surf">SURF</option>
+        <option value="drill">DRILL</option>
+      </select>
+      <label style="color:var(--muted);font-size:11px;">
+        <input type="checkbox" id="importAutoSections" checked style="margin-right:4px;"/>
+        AUTO-DETECT SECTIONS
+      </label>
+    </div>
+    <input type="file" id="importFile" accept=".mscz,.musicxml,.xml"
+           style="display:none;" onchange="importScore()"/>
+    <div class="btn btn-primary" onclick="document.getElementById('importFile').click()">
+      📂 CHOOSE FILE &amp; IMPORT
+    </div>
+    <div id="importStatus" style="margin-top:10px;font-size:12px;color:var(--muted);"></div>
+  </div>
+
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -824,6 +873,68 @@ function init() {
   setInterval(animateReels, 40);
   setInterval(animateVu, 60);
   pollLooper();
+}
+
+// ── SCORES ────────────────────────────────────────────────────────────────────
+async function searchScores() {
+  const query = document.getElementById('scoresQuery').value.trim();
+  if (!query) return;
+  const el = document.getElementById('scoresResults');
+  el.innerHTML = '<div style="color:var(--muted);font-size:12px;">Searching...</div>';
+  try {
+    const r = await fetch('/api/scores/search', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({query})
+    });
+    const data = await r.json();
+    if (data.error) { el.innerHTML = `<div style="color:var(--red)">${data.error}</div>`; return; }
+    el.innerHTML = data.results.map(res => `
+      <div class="song-card" style="margin-bottom:8px;">
+        <div class="song-card-title">${res.title}</div>
+        <div class="song-card-meta" style="font-size:10px;">${res.note}</div>
+        <div class="song-card-actions">
+          <a href="${res.url}" target="_blank" class="btn btn-primary btn-sm" style="text-decoration:none;">
+            🔍 BROWSE ON ${res.source.toUpperCase()}
+          </a>
+        </div>
+      </div>`).join('') +
+      `<div style="color:var(--muted);font-size:10px;margin-top:6px;">${data.tip}</div>`;
+  } catch(e) {
+    el.innerHTML = `<div style="color:var(--red)">Error: ${e.message}</div>`;
+  }
+}
+
+async function importScore() {
+  const file = document.getElementById('importFile').files[0];
+  if (!file) return;
+  const genre = document.getElementById('importGenre').value;
+  const autoSections = document.getElementById('importAutoSections').checked;
+  const status = document.getElementById('importStatus');
+  status.style.color = 'var(--muted)';
+  status.textContent = `Uploading ${file.name}...`;
+
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('genre', genre);
+  fd.append('auto_sections', autoSections ? 'true' : 'false');
+
+  try {
+    const r = await fetch('/api/patterns/import', {method:'POST', body: fd});
+    const data = await r.json();
+    if (data.error) {
+      status.style.color = 'var(--red)';
+      status.textContent = '❌ ' + data.error;
+      return;
+    }
+    const sections = Object.entries(data.sections).map(([k,v]) => `${k}:${v}`).join(' ');
+    status.style.color = 'var(--green)';
+    status.textContent = `✅ Imported "${data.title}" → ${genre.toUpperCase()} [${sections}]`;
+    showToast('Patterns loaded!');
+  } catch(e) {
+    status.style.color = 'var(--red)';
+    status.textContent = '❌ ' + e.message;
+  }
 }
 
 // ── TABS ──────────────────────────────────────────────────────────────────────
