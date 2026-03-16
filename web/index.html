@@ -958,7 +958,7 @@ async function parseImageScore() {
     const sections = Object.entries(data.sections).map(([k,v]) => `${k}:${v}`).join(' ');
     status.style.color = 'var(--green)';
     status.textContent = `✅ "${data.title}" → ${genre.toUpperCase()} [${sections}] @ ${data.bpm}BPM`;
-    showToast('Drum patterns loaded from image!');
+    toast('PATTERNS LOADED FROM IMAGE!');
   } catch(e) {
     status.style.color = 'var(--red)';
     status.textContent = '❌ ' + e.message;
@@ -990,7 +990,7 @@ async function importScore() {
     const sections = Object.entries(data.sections).map(([k,v]) => `${k}:${v}`).join(' ');
     status.style.color = 'var(--green)';
     status.textContent = `✅ Imported "${data.title}" → ${genre.toUpperCase()} [${sections}]`;
-    showToast('Patterns loaded!');
+    toast('PATTERNS LOADED!');
   } catch(e) {
     status.style.color = 'var(--red)';
     status.textContent = '❌ ' + e.message;
