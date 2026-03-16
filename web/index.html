@@ -5,608 +5,432 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#1a1208">
-<link rel="manifest" href="/manifest.json">
 <title>PI BANDMATE</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
 <style>
-:root {
-  --tape:       #120e08;
-  --panel:      #1e1810;
-  --panel2:     #261e14;
-  --metal:      #2e2418;
-  --metal2:     #3a2e1e;
-  --border:     #4a3820;
-  --border2:    #5a4828;
-  --amber:      #c87a08;
-  --amber2:     #e8a020;
-  --amber3:     #f0c060;
-  --amber-dim:  #5a3808;
-  --amber-bg:   #2a1e08;
-  --red:        #cc2200;
-  --red-dim:    #441000;
-  --green:      #00bb44;
-  --green-dim:  #004418;
-  --cream:      #d4c88a;
-  --cream2:     #a89870;
-  --muted:      #6a5a3a;
-  --vu-bg:      #080c08;
-  --tc1:        #8b2a08; --tc1l: #ffaa66; --tc1b: #cc5500;
-  --tc2:        #083a7a; --tc2l: #66aaff; --tc2b: #0055bb;
-  --tc3:        #1a5a08; --tc3l: #88dd44; --tc3b: #226611;
-  --tc4:        #5a085a; --tc4l: #dd88dd; --tc4b: #660066;
-}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html{background:var(--tape);}
-body{
-  background:var(--tape);
-  color:var(--cream);
-  font-family:'Share Tech Mono',monospace;
-  font-size:14px;
-  min-height:100vh;
-  overflow-x:hidden;
-}
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&display=swap');
 
-/* ── HEADER ── */
-.header{
-  background:var(--metal);
-  border-bottom:2px solid var(--border2);
-  padding:10px 14px 8px;
-  position:sticky;top:0;z-index:100;
-  display:flex;align-items:center;justify-content:space-between;
-}
-.brand{
-  font-family:'Bebas Neue',cursive;
-  font-size:26px;
-  letter-spacing:4px;
-  color:var(--amber2);
-  line-height:1;
-}
-.brand-sub{
-  font-size:9px;
-  font-family:'Share Tech Mono',monospace;
-  color:var(--muted);
-  letter-spacing:3px;
-}
-.header-right{display:flex;align-items:center;gap:10px;}
-.leds{display:flex;gap:6px;align-items:center;}
-.led{
-  width:9px;height:9px;border-radius:50%;
-  background:#1a1a0a;border:1px solid #2a2010;
-}
-.led.on-green{background:var(--green);box-shadow:0 0 5px var(--green);}
-.led.on-amber{background:var(--amber2);box-shadow:0 0 5px var(--amber2);}
-.led.on-red{background:var(--red);box-shadow:0 0 5px var(--red);animation:blink .7s infinite;}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+  :root {
+    --bg:       #0a0a0a;
+    --surface:  #141414;
+    --raised:   #1e1e1e;
+    --border:   #2a2a2a;
+    --accent:   #e8ff00;
+    --accent2:  #ff3c00;
+    --text:     #f0f0f0;
+    --muted:    #555;
+    --playing:  #00ff88;
+  }
 
-.bpm-pill{
-  background:var(--vu-bg);
-  border:1px solid var(--amber-dim);
-  border-radius:3px;
-  padding:3px 10px;
-  text-align:center;
-  min-width:70px;
-}
-.bpm-pill-num{
-  font-family:'VT323',monospace;
-  font-size:32px;
-  color:var(--amber2);
-  line-height:1;
-}
-.bpm-pill-lbl{font-size:8px;color:var(--muted);letter-spacing:3px;}
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-/* ── REELS ── */
-.reels{
-  background:var(--panel);
-  border-bottom:1px solid var(--border);
-  padding:8px 20px;
-  display:flex;align-items:center;justify-content:center;gap:24px;
-}
-.tape-line{height:2px;flex:1;background:linear-gradient(90deg,var(--amber-dim),#2a1808);border-radius:1px;}
-.reel{
-  width:44px;height:44px;border-radius:50%;
-  background:var(--metal2);border:2px solid var(--border2);
-  position:relative;display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;
-}
-.reel-hub{
-  width:14px;height:14px;border-radius:50%;
-  background:var(--tape);border:2px solid var(--amber-dim);
-  z-index:2;
-}
-.reel-spoke{
-  position:absolute;
-  width:2px;height:16px;
-  background:var(--amber-dim);
-  top:50%;left:50%;
-  transform-origin:bottom center;
-}
-.reel-spoke:nth-child(2){transform:translateX(-50%) rotate(0deg) translateY(-100%);}
-.reel-spoke:nth-child(3){transform:translateX(-50%) rotate(120deg) translateY(-100%);}
-.reel-spoke:nth-child(4){transform:translateX(-50%) rotate(240deg) translateY(-100%);}
-.playing-badge{
-  font-family:'Bebas Neue',cursive;
-  font-size:12px;letter-spacing:3px;
-  padding:3px 10px;
-  background:var(--green-dim);
-  border:1px solid var(--green);
-  border-radius:2px;
-  color:var(--green);
-  animation:pulse-green 1.2s infinite;
-}
-.stopped-badge{
-  font-size:12px;letter-spacing:3px;
-  padding:3px 10px;color:var(--muted);
-}
-@keyframes pulse-green{0%,100%{opacity:1}50%{opacity:.55}}
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
 
-/* ── TABS ── */
-.tabs{
-  display:flex;
-  background:var(--tape);
-  border-bottom:2px solid var(--border);
-  overflow-x:auto;scrollbar-width:none;
-}
-.tabs::-webkit-scrollbar{display:none;}
-.tab{
-  flex:1;min-width:62px;
-  padding:13px 6px;
-  text-align:center;
-  font-family:'Bebas Neue',cursive;
-  font-size:14px;letter-spacing:2px;
-  color:var(--muted);cursor:pointer;
-  border-bottom:3px solid transparent;
-  transition:all .2s;white-space:nowrap;
-}
-.tab.active{color:var(--amber2);border-bottom-color:var(--amber2);}
-.tab:active{background:var(--metal);}
+  /* ── Header ── */
+  .header {
+    background: var(--surface);
+    border-bottom: 2px solid var(--accent);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 4px;
+    color: var(--accent);
+  }
+  .header-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--muted);
+    transition: background 0.3s;
+  }
+  .status-dot.playing { background: var(--playing); box-shadow: 0 0 8px var(--playing); animation: pulse 1s infinite; }
 
-/* ── PAGES ── */
-.page{display:none;padding:14px;}
-.page.active{display:block;}
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
 
-/* ── SECTION LABELS ── */
-.slabel{
-  font-size:9px;letter-spacing:3px;color:var(--muted);
-  text-transform:uppercase;margin-bottom:8px;padding-left:2px;
-}
-.divider{
-  height:1px;
-  background:linear-gradient(90deg,transparent,var(--amber-dim),transparent);
-  margin:14px 0;
-}
+  /* ── Tabs ── */
+  .tabs {
+    display: flex;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex: 1;
+    min-width: 70px;
+    padding: 12px 8px;
+    text-align: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 15px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
-/* ── NOW PLAYING ── */
-.now-playing{
-  background:var(--vu-bg);
-  border:1px solid var(--border);
-  border-radius:4px;
-  padding:14px;
-  margin-bottom:14px;
-}
-.np-title{
-  font-family:'Bebas Neue',cursive;
-  font-size:22px;letter-spacing:2px;
-  color:var(--amber2);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  margin-bottom:3px;
-}
-.np-meta{color:var(--muted);font-size:11px;margin-bottom:10px;}
-.np-section{
-  font-family:'Bebas Neue',cursive;
-  font-size:40px;letter-spacing:5px;
-  color:var(--green);
-  text-align:center;min-height:48px;line-height:1;
-  margin-bottom:6px;
-}
-.np-bpm-big{
-  font-family:'VT323',monospace;
-  font-size:64px;color:var(--amber2);
-  text-align:center;line-height:1;
-}
-.np-bpm-lbl{font-size:11px;color:var(--muted);letter-spacing:4px;text-align:center;}
+  /* ── Pages ── */
+  .page { display: none; padding: 16px; }
+  .page.active { display: block; }
 
-/* ── BIG BUTTONS ── */
-.btn{
-  display:block;width:100%;
-  padding:16px;
-  font-family:'Bebas Neue',cursive;
-  font-size:20px;letter-spacing:3px;
-  border:1px solid var(--border2);border-radius:4px;
-  cursor:pointer;text-align:center;
-  background:var(--metal);color:var(--cream);
-  transition:all .12s;
-  -webkit-tap-highlight-color:transparent;
-}
-.btn:active{transform:scale(.97);background:var(--metal2);}
-.btn-primary{background:var(--amber-bg);border-color:var(--amber);color:var(--amber2);}
-.btn-primary:active{background:var(--amber-dim);}
-.btn-danger{background:var(--red-dim);border-color:var(--red);color:#ff6644;}
-.btn-danger:active{background:#220800;}
-.btn-success{background:var(--green-dim);border-color:var(--green);color:var(--green);}
-.btn-sm{display:inline-block;width:auto;padding:10px 18px;font-size:16px;letter-spacing:2px;}
+  /* ── Now Playing ── */
+  .now-playing {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .np-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .np-meta { color: var(--muted); font-size: 12px; margin-bottom: 12px; }
+  .np-section {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    letter-spacing: 4px;
+    color: var(--playing);
+    text-align: center;
+    margin: 8px 0;
+    min-height: 44px;
+  }
+  .np-bpm {
+    text-align: center;
+    font-size: 48px;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 2px;
+    color: var(--text);
+    line-height: 1;
+  }
+  .np-bpm span { font-size: 16px; color: var(--muted); letter-spacing: 4px; }
 
-/* ── SECTION GRID ── */
-.section-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:8px;margin:0 0 14px;
-}
-.sec-btn{
-  padding:15px 4px;
-  font-family:'Bebas Neue',cursive;
-  font-size:16px;letter-spacing:2px;
-  background:var(--tape);border:1px solid var(--border);border-radius:4px;
-  color:var(--cream2);cursor:pointer;text-align:center;
-  transition:all .15s;
-}
-.sec-btn:active{background:var(--border);}
-.sec-btn.active{border-color:var(--green);color:var(--green);background:var(--green-dim);}
+  /* ── Big buttons ── */
+  .btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 3px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary { background: var(--accent); color: #000; }
+  .btn-danger  { background: var(--accent2); color: #fff; }
+  .btn-ghost   { background: var(--raised); color: var(--text); border: 1px solid var(--border); }
+  .btn-sm {
+    display: inline-block;
+    width: auto;
+    padding: 8px 16px;
+    font-size: 15px;
+    letter-spacing: 2px;
+  }
 
-/* ── BPM CONTROL ── */
-.bpm-row{
-  display:flex;align-items:center;gap:10px;
-  margin-bottom:14px;
-}
-.bpm-adj{
-  min-width:56px;height:56px;
-  background:var(--metal);border:1px solid var(--border2);border-radius:4px;
-  color:var(--amber2);font-family:'Bebas Neue',cursive;font-size:22px;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;transition:all .12s;
-}
-.bpm-adj:active{background:var(--metal2);transform:scale(.95);}
-.bpm-display-main{
-  flex:1;text-align:center;
-  background:var(--vu-bg);border:1px solid var(--amber-dim);border-radius:4px;
-  padding:8px;
-}
-.bpm-display-main .num{
-  font-family:'VT323',monospace;font-size:56px;
-  color:var(--amber2);line-height:1;
-}
-.bpm-display-main .lbl{font-size:9px;color:var(--muted);letter-spacing:3px;}
+  /* ── Section buttons ── */
+  .section-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 12px 0;
+  }
+  .sec-btn {
+    padding: 12px 4px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 2px;
+    background: var(--raised);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+  }
+  .sec-btn:active { background: var(--border); }
+  .sec-btn.active { border-color: var(--playing); color: var(--playing); }
 
-/* ── VU METER ── */
-.vu-wrap{
-  background:var(--vu-bg);border:1px solid var(--border);border-radius:4px;
-  padding:8px 10px;margin-bottom:14px;
-}
-.vu-label{font-size:9px;color:var(--muted);letter-spacing:2px;margin-bottom:5px;}
-.vu-bars{display:flex;gap:2px;height:12px;}
-.vu-seg{flex:1;background:#0a0e0a;border-radius:1px;transition:background .05s;}
-.vu-seg.g{background:var(--green);}
-.vu-seg.a{background:var(--amber2);}
-.vu-seg.r{background:var(--red);}
+  /* ── BPM control ── */
+  .bpm-control {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 12px 0;
+  }
+  .bpm-btn {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: var(--raised);
+    border: 2px solid var(--border);
+    color: var(--text);
+    font-size: 24px;
+    font-family: 'Bebas Neue', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .bpm-btn:active { background: var(--border); transform: scale(0.95); }
+  .bpm-display {
+    flex: 1;
+    text-align: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    letter-spacing: 2px;
+    color: var(--accent);
+  }
+  .bpm-label { font-size: 12px; color: var(--muted); letter-spacing: 4px; display: block; }
 
-/* ── SEARCH ── */
-.search-box{display:flex;gap:8px;margin-bottom:12px;}
-.search-input{
-  flex:1;background:var(--vu-bg);border:1px solid var(--border2);border-radius:4px;
-  color:var(--cream);font-family:'Share Tech Mono',monospace;font-size:14px;
-  padding:13px 12px;outline:none;
-}
-.search-input:focus{border-color:var(--amber);}
-.search-input::placeholder{color:var(--muted);}
+  /* ── Search ── */
+  .search-box {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .search-input {
+    flex: 1;
+    background: var(--raised);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    padding: 12px;
+    outline: none;
+  }
+  .search-input:focus { border-color: var(--accent); }
+  .search-input::placeholder { color: var(--muted); }
 
-/* ── SONG CARD ── */
-.song-card{
-  background:var(--panel);border:1px solid var(--border2);border-radius:4px;
-  padding:14px;margin-bottom:10px;
-}
-.song-card-title{
-  font-family:'Bebas Neue',cursive;font-size:20px;letter-spacing:2px;
-  color:var(--amber2);margin-bottom:4px;
-}
-.song-card-meta{color:var(--muted);font-size:11px;margin-bottom:6px;}
-.song-card-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+  /* ── Song result card ── */
+  .song-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+  .song-card-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .song-card-meta { color: var(--muted); font-size: 12px; margin-bottom: 10px; }
+  .song-card-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
-/* ── GENRE GRID ── */
-.genre-grid{
-  display:grid;grid-template-columns:repeat(3,1fr);
-  gap:8px;margin-bottom:14px;
-}
-.genre-btn{
-  padding:16px 4px;
-  font-family:'Bebas Neue',cursive;font-size:15px;letter-spacing:2px;
-  background:var(--tape);border:1px solid var(--border);border-radius:4px;
-  color:var(--cream2);cursor:pointer;text-align:center;transition:all .15s;
-}
-.genre-btn:active{transform:scale(.97);}
-.genre-btn.active{background:var(--amber-bg);border-color:var(--amber);color:var(--amber2);}
+  /* ── Genre grid ── */
+  .genre-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .genre-btn {
+    padding: 14px 4px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 15px;
+    letter-spacing: 2px;
+    background: var(--raised);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+  }
+  .genre-btn:active { transform: scale(0.97); }
+  .genre-btn.active { border-color: var(--accent); color: var(--accent); }
 
-/* ── SETLIST ── */
-.setlist-item{
-  background:var(--panel);border:1px solid var(--border);border-radius:4px;
-  padding:13px 14px;margin-bottom:8px;
-  display:flex;align-items:center;gap:10px;
-}
-.setlist-item.active-song{border-color:var(--green);}
-.setlist-num{font-family:'Bebas Neue',cursive;font-size:22px;color:var(--muted);min-width:28px;}
-.setlist-info{flex:1;min-width:0;}
-.setlist-title{
-  font-family:'Bebas Neue',cursive;font-size:16px;letter-spacing:1px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
-.setlist-meta{font-size:11px;color:var(--muted);}
-.setlist-actions{display:flex;gap:6px;}
+  /* ── Setlist ── */
+  .setlist-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .setlist-item.active-song { border-color: var(--playing); }
+  .setlist-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    color: var(--muted);
+    min-width: 24px;
+  }
+  .setlist-info { flex: 1; min-width: 0; }
+  .setlist-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .setlist-meta { font-size: 11px; color: var(--muted); }
+  .setlist-actions { display: flex; gap: 6px; }
+  .icon-btn {
+    width: 34px; height: 34px;
+    background: var(--raised);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-.icon-btn{
-  width:40px;height:40px;
-  background:var(--metal);border:1px solid var(--border2);border-radius:4px;
-  color:var(--cream2);font-size:15px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  transition:all .12s;
-}
-.icon-btn:active{transform:scale(.92);background:var(--metal2);}
+  /* ── Cache list ── */
+  .cache-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .cache-item:active { border-color: var(--accent); }
+  .cache-info { flex: 1; min-width: 0; }
+  .cache-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 15px;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .cache-meta { font-size: 11px; color: var(--muted); }
 
-/* ── LIBRARY ── */
-.cache-item{
-  background:var(--panel);border:1px solid var(--border);border-radius:4px;
-  padding:11px 14px;margin-bottom:6px;
-  display:flex;align-items:center;gap:10px;cursor:pointer;transition:border-color .15s;
-}
-.cache-item:active{border-color:var(--amber);}
-.cache-info{flex:1;min-width:0;}
-.cache-title{
-  font-family:'Bebas Neue',cursive;font-size:16px;letter-spacing:1px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
-.cache-meta{font-size:11px;color:var(--muted);}
-
-/* ── LOOPER ── */
-.looper-layer{
-  background:var(--vu-bg);border:1px solid var(--border);border-radius:6px;
-  padding:12px;margin-bottom:10px;
-  transition:border-color .2s;
-}
-.looper-layer.recording{border-color:var(--red);}
-.looper-layer.has-audio{border-color:var(--green);}
-
-.layer-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
-.layer-badge{
-  width:28px;height:28px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Bebas Neue',cursive;font-size:14px;
-  flex-shrink:0;
-}
-.lb1{background:var(--tc1);color:var(--tc1l);border:1px solid var(--tc1b);}
-.lb2{background:var(--tc2);color:var(--tc2l);border:1px solid var(--tc2b);}
-.lb3{background:var(--tc3);color:var(--tc3l);border:1px solid var(--tc3b);}
-.lb4{background:var(--tc4);color:var(--tc4l);border:1px solid var(--tc4b);}
-
-.layer-status-name{
-  font-family:'Bebas Neue',cursive;font-size:15px;letter-spacing:2px;flex:1;
-}
-.layer-duration{font-size:10px;color:var(--muted);letter-spacing:1px;}
-
-.layer-btns{display:flex;gap:6px;flex-shrink:0;}
-.lbtn{
-  min-width:44px;height:44px;
-  background:var(--metal);border:1px solid var(--border2);border-radius:4px;
-  color:var(--cream2);font-family:'Bebas Neue',cursive;font-size:13px;
-  letter-spacing:1px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  transition:all .12s;
-}
-.lbtn:active{transform:scale(.94);}
-.lbtn.rec-btn{background:var(--red-dim);border-color:var(--red);color:#ff6644;}
-.lbtn.rec-btn.recording{animation:blink .5s infinite;}
-.lbtn.play-btn{border-color:var(--green-dim);}
-.lbtn.play-btn.active-state{background:var(--green-dim);border-color:var(--green);color:var(--green);}
-.lbtn.mute-btn.muted{background:#2a1a08;color:var(--amber-dim);border-color:var(--amber-dim);}
-
-/* waveform */
-.waveform{
-  width:100%;height:40px;
-  background:#040708;border-radius:3px;
-  display:block;margin-bottom:10px;
-}
-
-/* rec progress */
-.rec-bar-wrap{height:6px;background:var(--metal);border-radius:3px;margin-bottom:10px;overflow:hidden;display:none;}
-.rec-bar-wrap.active{display:block;}
-.rec-bar-fill{height:100%;background:var(--red);width:0%;transition:width .15s linear;border-radius:3px;}
-.rec-countdown{
-  font-family:'Bebas Neue',cursive;font-size:12px;color:var(--red);
-  letter-spacing:2px;text-align:center;margin-bottom:4px;display:none;
-}
-.rec-countdown.active{display:block;}
-
-.vol-wrap{margin-bottom:8px;}
-.vol-wrap label{font-size:9px;letter-spacing:2px;color:var(--muted);display:block;margin-bottom:4px;}
-.vol-slider{width:100%;accent-color:var(--amber);}
-.fx-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:8px;}
-.fx-item label{font-size:9px;letter-spacing:2px;color:var(--muted);display:block;margin-bottom:3px;}
-.fx-slider{width:100%;accent-color:var(--amber2);}
-.pitch-row{display:flex;align-items:center;gap:8px;}
-.pitch-row label{font-size:9px;letter-spacing:2px;color:var(--muted);flex-shrink:0;}
-.pitch-val{font-family:'Bebas Neue',cursive;color:var(--amber2);min-width:32px;text-align:center;}
-
-/* input meter */
-.input-meter{height:8px;background:var(--metal);border-radius:4px;margin-bottom:12px;overflow:hidden;}
-.input-meter-fill{height:100%;background:var(--green);width:0%;transition:width .1s;border-radius:4px;}
-
-/* looper controls row */
-.looper-top{display:flex;gap:8px;margin-bottom:12px;}
-.sel-wrap{display:flex;align-items:center;gap:6px;flex:1;}
-.sel-label{font-size:10px;color:var(--muted);letter-spacing:2px;white-space:nowrap;}
-.retro-select{
-  flex:1;background:var(--metal);border:1px solid var(--border2);
-  color:var(--cream);font-family:'Bebas Neue',cursive;font-size:16px;
-  padding:9px 8px;border-radius:4px;outline:none;letter-spacing:1px;
-}
-
-/* ── TOAST ── */
-.toast{
-  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
-  background:var(--metal2);border:1px solid var(--amber);color:var(--amber2);
-  padding:10px 22px;border-radius:4px;
-  font-family:'Bebas Neue',cursive;font-size:16px;letter-spacing:3px;
-  z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;
-}
-.toast.show{opacity:1;}
-
-/* ── MISC ── */
-.row{display:flex;gap:8px;margin-bottom:10px;}
-.row>*{flex:1;}
-.empty{color:var(--muted);text-align:center;padding:24px;font-size:12px;letter-spacing:2px;}
-.spinner{
-  display:inline-block;width:14px;height:14px;
-  border:2px solid var(--border2);border-top-color:var(--amber);
-  border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;
-}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-.screws{
-  display:flex;justify-content:space-between;
-  padding:4px 10px 0;
-}
-.screw{
-  width:10px;height:10px;border-radius:50%;
-  background:#3a2a18;border:1px solid var(--border);
-  position:relative;
-}
-.screw::after{
-  content:'';position:absolute;
-  top:50%;left:10%;right:10%;height:1px;
-  background:var(--tape);
-  transform:translateY(-50%) rotate(45deg);
-}
-
-/* time sig grid */
-.timesig-grid{
-  display:grid;grid-template-columns:repeat(4,1fr);
-  gap:8px;margin-bottom:14px;
-}
-.timesig-btn{
-  padding:14px 4px;
-  font-family:'Share Tech Mono',monospace;font-size:14px;
-  background:var(--tape);border:1px solid var(--border);border-radius:4px;
-  color:var(--cream2);cursor:pointer;text-align:center;transition:all .15s;
-}
-.timesig-btn:active{transform:scale(.97);}
-.timesig-btn.active{background:var(--amber-bg);border-color:var(--amber);color:var(--amber2);}
-
-/* Search mode / view */
-.active-mode-btn{background:var(--amber-bg);border-color:var(--amber);color:var(--amber2);}
-.view-btn-active{background:var(--amber-bg);border-color:var(--amber);color:var(--amber2);}
-
-/* Result cards — grid mode */
-.results-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
-.results-grid .song-card{margin-bottom:0;}
-
-/* Result cards — compact mode */
-.result-compact{
-  display:flex;align-items:center;gap:10px;
-  background:var(--panel);border:1px solid var(--border);border-radius:4px;
-  padding:10px 12px;margin-bottom:6px;cursor:pointer;
-}
-.result-compact:active{border-color:var(--amber);}
-.result-compact-info{flex:1;min-width:0;}
-.result-compact-title{
-  font-family:'Bebas Neue',cursive;font-size:15px;letter-spacing:1px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
-.result-compact-meta{font-size:10px;color:var(--muted);}
-.result-compact-actions{display:flex;gap:4px;flex-shrink:0;}
-
-/* Artist browse results */
-.artist-song-item{
-  background:var(--panel);border:1px solid var(--border);border-radius:4px;
-  padding:12px 14px;margin-bottom:6px;
-}
-.artist-song-title{
-  font-family:'Bebas Neue',cursive;font-size:17px;letter-spacing:1px;
-  color:var(--cream);margin-bottom:3px;
-}
-.artist-song-meta{font-size:11px;color:var(--muted);margin-bottom:8px;}
-.artist-song-actions{display:flex;gap:6px;flex-wrap:wrap;}
+  /* ── Misc ── */
+  .label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    margin-top: 16px;
+  }
+  .row { display: flex; gap: 8px; }
+  .row > * { flex: 1; }
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--raised);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 3px;
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+  .empty { color: var(--muted); text-align: center; padding: 24px; font-size: 13px; }
+  .spinner {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
 
-<div class="screws">
-  <div class="screw"></div><div class="screw"></div>
-  <div class="screw"></div><div class="screw"></div>
-</div>
-
-<!-- ── HEADER ── -->
 <div class="header">
-  <div>
-    <div class="brand">PI BANDMATE</div>
-    <div class="brand-sub">DRUM MACHINE + LOOPER</div>
-  </div>
-  <div class="header-right">
-    <div class="leds">
-      <div class="led" id="ledConn" title="Connected"></div>
-      <div class="led" id="ledPlay" title="Playing"></div>
-      <div class="led" id="ledRec"  title="Recording"></div>
-    </div>
-    <div class="bpm-pill">
-      <div class="bpm-pill-num" id="headerBpm">—</div>
-      <div class="bpm-pill-lbl">BPM</div>
-    </div>
+  <div class="header-title">BANDMATE</div>
+  <div class="header-status">
+    <div class="status-dot" id="statusDot"></div>
+    <span id="statusText">STOPPED</span>
   </div>
 </div>
 
-<!-- ── TAPE REELS ── -->
-<div class="reels">
-  <div class="reel" id="reelL">
-    <div class="reel-spoke"></div>
-    <div class="reel-spoke"></div>
-    <div class="reel-spoke"></div>
-    <div class="reel-hub"></div>
-  </div>
-  <div class="tape-line"></div>
-  <div id="playBadge" class="stopped-badge">STOPPED</div>
-  <div class="tape-line"></div>
-  <div class="reel" id="reelR">
-    <div class="reel-spoke"></div>
-    <div class="reel-spoke"></div>
-    <div class="reel-spoke"></div>
-    <div class="reel-hub"></div>
-  </div>
-</div>
-
-<!-- ── TABS ── -->
 <div class="tabs">
-  <div class="tab active"  onclick="showTab('play')">PLAY</div>
-  <div class="tab"         onclick="showTab('search')">SEARCH</div>
-  <div class="tab"         onclick="showTab('setlist')">SETLIST</div>
-  <div class="tab"         onclick="showTab('library')">LIBRARY</div>
-  <div class="tab"         onclick="showTab('favs')">❤️ FAV</div>
-  <div class="tab"         onclick="showTab('genre')">GENRE</div>
-  <div class="tab"         onclick="showTab('looper')">LOOPER</div>
-  <div class="tab"         onclick="showTab('scores')">SCORES</div>
+  <div class="tab active" onclick="showTab('play')">PLAY</div>
+  <div class="tab" onclick="showTab('search')">SEARCH</div>
+  <div class="tab" onclick="showTab('setlist')">SETLIST</div>
+  <div class="tab" onclick="showTab('library')">LIBRARY</div>
+  <div class="tab" onclick="showTab('genre')">GENRE</div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════ PLAY TAB ══ -->
+<!-- ── PLAY TAB ── -->
 <div class="page active" id="tab-play">
 
   <div class="now-playing">
     <div class="np-title" id="npTitle">NO SONG LOADED</div>
     <div class="np-meta" id="npMeta">—</div>
-    <div id="npFeel" style="font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.4"></div>
     <div class="np-section" id="npSection"></div>
-    <div class="np-bpm-big" id="npBpm">—</div>
-    <div class="np-bpm-lbl">BPM</div>
+    <div class="np-bpm"><span id="npBpm">—</span> <span>BPM</span></div>
   </div>
 
-  <div class="slabel">BPM</div>
-  <div class="bpm-row">
-    <div class="bpm-adj" onclick="bpmDelta(-5)">−5</div>
-    <div class="bpm-adj" onclick="bpmDelta(-1)">−</div>
-    <div class="bpm-display-main">
-      <div class="num" id="bpmDisplay">—</div>
-      <div class="lbl">BPM</div>
+  <div class="bpm-control">
+    <button class="bpm-btn" onclick="bpmDelta(-5)">−5</button>
+    <button class="bpm-btn" onclick="bpmDelta(-1)">−</button>
+    <div class="bpm-display">
+      <span id="bpmDisplay">—</span>
+      <span class="bpm-label">BPM</span>
     </div>
-    <div class="bpm-adj" onclick="bpmDelta(1)">+</div>
-    <div class="bpm-adj" onclick="bpmDelta(5)">+5</div>
+    <button class="bpm-btn" onclick="bpmDelta(1)">+</button>
+    <button class="bpm-btn" onclick="bpmDelta(5)">+5</button>
   </div>
 
-  <div class="slabel">JUMP TO SECTION</div>
+  <div class="label">JUMP TO SECTION</div>
   <div class="section-grid">
     <div class="sec-btn" onclick="jumpSection('intro')">INTRO</div>
     <div class="sec-btn" onclick="jumpSection('verse')">VERSE</div>
@@ -616,106 +440,57 @@ body{
     <div class="sec-btn" onclick="jumpSection('outro')">OUTRO</div>
   </div>
 
-  <div class="slabel">TRANSPORT</div>
-  <div class="row" style="margin-bottom:10px">
-    <div class="btn btn-success" onclick="replayCurrentSong()" style="font-size:22px;padding:18px">▶ PLAY</div>
-  </div>
-  <div class="row">
-    <div class="btn btn-primary" onclick="sendCmd({cmd:'mute_toggle'})">MUTE</div>
-    <div class="btn btn-danger"  onclick="stopEngine()">STOP</div>
+  <div class="label">TRANSPORT</div>
+  <div class="row" style="margin-bottom:8px">
+    <button class="btn btn-ghost" onclick="sendCmd({cmd:'mute_toggle'})">MUTE</button>
+    <button class="btn btn-danger" onclick="stopEngine()">STOP</button>
   </div>
 
+  <!-- Setlist nav if active -->
   <div id="setlistNav" style="display:none">
-    <div class="divider"></div>
-    <div class="slabel">SETLIST NAV</div>
+    <hr class="divider">
+    <div class="label">SETLIST</div>
     <div class="row">
-      <div class="btn" onclick="prevSong()">◀ PREV</div>
-      <div class="btn" onclick="nextSong()">NEXT ▶</div>
+      <button class="btn btn-ghost" onclick="prevSong()">◀ PREV</button>
+      <button class="btn btn-ghost" onclick="nextSong()">NEXT ▶</button>
     </div>
   </div>
-
-  <div class="divider"></div>
-  <div class="vu-wrap">
-    <div class="vu-label">OUTPUT LEVEL</div>
-    <div class="vu-bars" id="vuBars"></div>
-  </div>
-
 </div>
 
-<!-- ═══════════════════════════════════════════════════ SEARCH TAB ══ -->
+<!-- ── SEARCH TAB ── -->
 <div class="page" id="tab-search">
-
-  <!-- Mode toggle -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
-    <div class="btn active-mode-btn" id="modeSongBtn" onclick="setSearchMode('song')" style="padding:12px;font-size:14px;letter-spacing:2px">SONG LOOKUP</div>
-    <div class="btn" id="modeArtistBtn" onclick="setSearchMode('artist')" style="padding:12px;font-size:14px;letter-spacing:2px">ARTIST BROWSE</div>
+  <div class="label">LOOK UP A SONG</div>
+  <div class="search-box">
+    <input class="search-input" id="searchInput" type="text"
+           placeholder="Superstition Stevie Wonder..."
+           onkeydown="if(event.key==='Enter')searchSong()">
+    <button class="btn btn-primary btn-sm" onclick="searchSong()">GO</button>
   </div>
-
-  <!-- Song lookup mode -->
-  <div id="modeSong">
-    <div class="slabel">SONG TITLE</div>
-    <div class="search-box">
-      <input class="search-input" id="searchInput" type="text"
-             placeholder="Whole Lotta Love..."
-             onkeydown="if(event.key==='Enter')searchSong()">
-    </div>
-    <div class="slabel">ARTIST <span style="color:var(--muted);font-size:8px;letter-spacing:1px">(OPTIONAL)</span></div>
-    <div class="search-box">
-      <input class="search-input" id="artistInput" type="text"
-             placeholder="Led Zeppelin..."
-             onkeydown="if(event.key==='Enter')searchSong()">
-    </div>
-    <div class="slabel">GENRE FILTER <span style="color:var(--muted);font-size:8px;letter-spacing:1px">(OPTIONAL)</span></div>
-    <div class="genre-grid" id="searchGenreGrid" style="margin-bottom:12px"></div>
-    <div class="btn btn-primary" onclick="searchSong()" style="margin-bottom:8px;font-size:18px;padding:16px">SEARCH</div>
-    <div class="btn" onclick="clearSearch()" style="margin-bottom:14px;font-size:13px;padding:10px;letter-spacing:1px">CLEAR</div>
-  </div>
-
-  <!-- Artist browse mode -->
-  <div id="modeArtist" style="display:none">
-    <div class="slabel">ARTIST NAME</div>
-    <div class="search-box">
-      <input class="search-input" id="browseArtistInput" type="text"
-             placeholder="Led Zeppelin..."
-             onkeydown="if(event.key==='Enter')browseArtist()">
-    </div>
-    <div class="slabel">GENRE HINT <span style="color:var(--muted);font-size:8px;letter-spacing:1px">(OPTIONAL)</span></div>
-    <div class="genre-grid" id="browseGenreGrid" style="margin-bottom:12px"></div>
-    <div class="btn btn-primary" onclick="browseArtist()" style="margin-bottom:8px;font-size:18px;padding:16px">BROWSE ARTIST</div>
-    <div class="btn" onclick="clearSearch()" style="margin-bottom:14px;font-size:13px;padding:10px;letter-spacing:1px">CLEAR</div>
-  </div>
-
-  <!-- View toggle -->
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px" id="viewToggleRow">
-    <div class="slabel" style="margin:0">RESULTS</div>
-    <div style="display:flex;gap:6px">
-      <div class="icon-btn" id="viewListBtn" onclick="setViewMode('list')" title="List" style="font-size:16px">☰</div>
-      <div class="icon-btn" id="viewGridBtn" onclick="setViewMode('grid')" title="Grid" style="font-size:16px">⊞</div>
-      <div class="icon-btn" id="viewCompactBtn" onclick="setViewMode('compact')" title="Compact" style="font-size:16px">≡</div>
-    </div>
-  </div>
-
   <div id="searchResult"></div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════ SETLIST TAB ══ -->
+<!-- ── SETLIST TAB ── -->
 <div class="page" id="tab-setlist">
-  <div class="slabel">ADD TO SETLIST</div>
+  <div class="label">ADD TO SETLIST</div>
   <div class="search-box">
     <input class="search-input" id="setlistInput" type="text"
            placeholder="Song name..."
            onkeydown="if(event.key==='Enter')addToSetlist()">
-    <div class="btn btn-primary btn-sm" onclick="addToSetlist()">ADD</div>
+    <button class="btn btn-primary btn-sm" onclick="addToSetlist()">ADD</button>
   </div>
+
   <div id="setlistItems"></div>
-  <div id="setlistControls" style="display:none;margin-top:12px">
-    <div class="btn btn-primary" onclick="playSetlist(0)">▶ PLAY FROM TOP</div>
+
+  <div id="setlistControls" style="display:none; margin-top:12px">
+    <div class="row">
+      <button class="btn btn-primary" onclick="playSetlist(0)">▶ PLAY FROM TOP</button>
+    </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════ LIBRARY TAB ══ -->
+<!-- ── LIBRARY TAB ── -->
 <div class="page" id="tab-library">
-  <div class="slabel">CACHED SONGS</div>
+  <div class="label">CACHED SONGS</div>
   <div class="search-box">
     <input class="search-input" id="filterInput" type="text"
            placeholder="Filter..." oninput="filterLibrary()">
@@ -723,296 +498,63 @@ body{
   <div id="libraryItems"></div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════ FAVS TAB ══ -->
-<div class="page" id="tab-favs">
-  <div class="slabel">FAVOURITE SONGS</div>
-  <div id="favsItems"><div class="empty">NO FAVOURITES YET — TAP ❤️ ON ANY SONG</div></div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════ GENRE TAB ══ -->
+<!-- ── GENRE TAB ── -->
 <div class="page" id="tab-genre">
-  <div class="slabel">DRUM KIT</div>
+  <div class="label">QUICK GROOVE</div>
   <div class="genre-grid" id="genreGrid"></div>
 
-  <div class="slabel">TIME SIGNATURE</div>
-  <div class="timesig-grid" id="timesigGrid"></div>
-
-  <div class="slabel">TEMPO</div>
-  <div class="bpm-row">
-    <div class="bpm-adj" onclick="adjustGenreBpm(-5)">−5</div>
-    <div class="bpm-adj" onclick="adjustGenreBpm(-1)">−</div>
-    <div class="bpm-display-main">
-      <div class="num" id="genreBpmDisplay">110</div>
-      <div class="lbl">BPM</div>
+  <div class="label">BPM</div>
+  <div class="bpm-control">
+    <button class="bpm-btn" onclick="adjustGenreBpm(-5)">−5</button>
+    <button class="bpm-btn" onclick="adjustGenreBpm(-1)">−</button>
+    <div class="bpm-display">
+      <span id="genreBpmDisplay">110</span>
+      <span class="bpm-label">BPM</span>
     </div>
-    <div class="bpm-adj" onclick="adjustGenreBpm(1)">+</div>
-    <div class="bpm-adj" onclick="adjustGenreBpm(5)">+5</div>
+    <button class="bpm-btn" onclick="adjustGenreBpm(1)">+</button>
+    <button class="bpm-btn" onclick="adjustGenreBpm(5)">+5</button>
   </div>
-  <div class="btn btn-primary" onclick="playGenre()" style="font-size:22px;padding:18px">▶ PLAY GENRE</div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════ LOOPER TAB ══ -->
-<div class="page" id="tab-looper">
-
-  <div class="slabel">INPUT LEVEL</div>
-  <div class="input-meter"><div class="input-meter-fill" id="inputMeter"></div></div>
-
-  <div class="looper-top">
-    <div class="btn" id="monitorBtn" onclick="toggleMonitor()" style="flex:1;padding:14px;font-size:16px;">
-      MON OFF
-    </div>
-    <div class="sel-wrap" style="flex:1">
-      <span class="sel-label">BARS</span>
-      <select id="barsSelect" class="retro-select" onchange="setBars(this.value)">
-        <option value="1">1</option>
-        <option value="2" selected>2</option>
-        <option value="4">4</option>
-        <option value="8">8</option>
-        <option value="16">16</option>
-      </select>
-    </div>
-    <div class="sel-wrap" style="flex:1">
-      <span class="sel-label">COUNT</span>
-      <select id="countinSelect" class="retro-select" onchange="setCountin(this.value)">
-        <option value="1" selected>1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-      </select>
-    </div>
-  </div>
-
-  <div id="looperLayers"></div>
-
-  <div style="margin-top:4px">
-    <div class="btn btn-danger" onclick="clearAllLoops()">CLEAR ALL LOOPS</div>
-  </div>
-</div>
-
-<div class="page" id="tab-scores">
-
-  <div class="np-section">
-    <div class="slabel">SEARCH MUSESCORE</div>
-    <div style="display:flex;gap:8px;margin-bottom:10px;">
-      <input id="scoresQuery" class="retro-select" style="flex:1;padding:10px;font-size:14px;"
-             placeholder="Song name e.g. Everlong" onkeydown="if(event.key==='Enter')searchScores()"/>
-      <div class="btn btn-primary btn-sm" onclick="searchScores()">FIND</div>
-    </div>
-    <div id="scoresResults"></div>
-  </div>
-
-  <div class="np-section" style="margin-top:12px;">
-    <div class="slabel">IMPORT DRUM SCORE (.mscz / .musicxml)</div>
-    <div style="margin-bottom:8px;color:var(--muted);font-size:11px;">
-      Download .mscz from MuseScore, then upload it here to load drum patterns.
-    </div>
-    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
-      <select id="importGenre" class="retro-select" style="flex:1;">
-        <option value="rock">ROCK</option>
-        <option value="metal">METAL</option>
-        <option value="funk">FUNK</option>
-        <option value="jazz">JAZZ</option>
-        <option value="blues">BLUES</option>
-        <option value="hiphop">HIP HOP</option>
-        <option value="trap">TRAP</option>
-        <option value="house">HOUSE</option>
-        <option value="pop">POP</option>
-        <option value="reggae">REGGAE</option>
-        <option value="dub">DUB</option>
-        <option value="surf">SURF</option>
-        <option value="drill">DRILL</option>
-      </select>
-      <label style="color:var(--muted);font-size:11px;">
-        <input type="checkbox" id="importAutoSections" checked style="margin-right:4px;"/>
-        AUTO-DETECT SECTIONS
-      </label>
-    </div>
-    <input type="file" id="importFile" accept=".mscz,.musicxml,.xml"
-           style="display:none;" onchange="importScore()"/>
-    <div class="btn btn-primary" onclick="document.getElementById('importFile').click()">
-      📂 CHOOSE FILE &amp; IMPORT
-    </div>
-    <div id="importStatus" style="margin-top:10px;font-size:12px;color:var(--muted);"></div>
-  </div>
-
-  <div class="np-section" style="margin-top:12px;">
-    <div class="slabel">📸 SCAN DRUM SHEET IMAGE</div>
-    <div style="margin-bottom:8px;color:var(--muted);font-size:11px;">
-      Screenshot or photo of drum notation — Claude reads it and extracts patterns.
-    </div>
-    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
-      <select id="imageGenre" class="retro-select" style="flex:1;">
-        <option value="rock">ROCK</option>
-        <option value="metal">METAL</option>
-        <option value="funk">FUNK</option>
-        <option value="jazz">JAZZ</option>
-        <option value="blues">BLUES</option>
-        <option value="hiphop">HIP HOP</option>
-        <option value="trap">TRAP</option>
-        <option value="house">HOUSE</option>
-        <option value="pop">POP</option>
-        <option value="reggae">REGGAE</option>
-        <option value="dub">DUB</option>
-        <option value="surf">SURF</option>
-        <option value="drill">DRILL</option>
-      </select>
-    </div>
-    <input type="file" id="imageFile" accept="image/*"
-           style="display:none;" onchange="parseImageScore()"/>
-    <div class="btn btn-primary" onclick="document.getElementById('imageFile').click()">
-      📸 UPLOAD SHEET IMAGE
-    </div>
-    <div id="imageStatus" style="margin-top:10px;font-size:12px;color:var(--muted);"></div>
-  </div>
-
+  <button class="btn btn-primary" onclick="playGenre()">▶ PLAY GENRE</button>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const GENRES = ['rock','metal','blues','jazz','funk','hiphop','trap','house','reggae','dub','surf','pop','drill'];
-const TIMESIGS = ['4/4','3/4','5/4','6/8','7/4','7/8','9/8','12/8'];
-const BPM_DEFAULTS = {rock:110,metal:160,blues:80,jazz:120,funk:98,hiphop:88,trap:90,house:125,reggae:76,dub:72,surf:140,pop:110,drill:140};
-const LAYER_CLASSES = ['lb1','lb2','lb3','lb4'];
-const WAVE_COLORS = ['#cc5500','#0055bb','#226611','#660066'];
+const GENRES = ['rock','metal','blues','jazz','funk','hiphop','trap','house',
+                'reggae','dub','surf','pop','drill'];
+const BPM_DEFAULTS = {rock:110,metal:160,blues:80,jazz:120,funk:98,
+                      hiphop:88,trap:90,house:125,reggae:76,dub:72,
+                      surf:140,pop:110,drill:140};
 
 let currentTab = 'play';
 let selectedGenre = 'rock';
-let selectedTimeSig = '4/4';
 let genreBpm = 110;
-let setlist = [];
-let setlistIdx = -1;
+let pollInterval = null;
 let cacheData = [];
-let looperState = null;
-let countinBars = 1;
-let reelAngle = 0;
-let vuPhase = 0;
-let vuLevel = 0.0;
-let isPlaying = false;
 
-// ── INIT ──────────────────────────────────────────────────────────────────────
+// ── Init ──────────────────────────────────────────────────────────────────────
 function init() {
-  buildVuBars();
   buildGenreGrid();
-  buildTimeSigGrid();
-  buildSearchGenreGrid();
-  buildBrowseGenreGrid();
-  loadFavourites();
-  renderSetlist();
+  loadLibrary();
   startPolling();
-  setInterval(pollLooper, 2000);
-  setInterval(animateReels, 40);
-  setInterval(animateVu, 60);
-  pollLooper();
+  renderSetlist();
 }
 
-// ── SCORES ────────────────────────────────────────────────────────────────────
-async function searchScores() {
-  const query = document.getElementById('scoresQuery').value.trim();
-  if (!query) return;
-  const el = document.getElementById('scoresResults');
-  el.innerHTML = '<div style="color:var(--muted);font-size:12px;">Searching...</div>';
-  try {
-    const r = await fetch('/api/scores/search', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({query})
-    });
-    const data = await r.json();
-    if (data.error) { el.innerHTML = `<div style="color:var(--red)">${data.error}</div>`; return; }
-    el.innerHTML = data.results.map(res => `
-      <div class="song-card" style="margin-bottom:8px;">
-        <div class="song-card-title">${res.title}</div>
-        <div class="song-card-meta" style="font-size:10px;">${res.note}</div>
-        <div class="song-card-actions">
-          <a href="${res.url}" target="_blank" class="btn btn-primary btn-sm" style="text-decoration:none;">
-            🔍 BROWSE ON ${res.source.toUpperCase()}
-          </a>
-        </div>
-      </div>`).join('') +
-      `<div style="color:var(--muted);font-size:10px;margin-top:6px;">${data.tip}</div>`;
-  } catch(e) {
-    el.innerHTML = `<div style="color:var(--red)">Error: ${e.message}</div>`;
-  }
-}
-
-async function parseImageScore() {
-  const file = document.getElementById('imageFile').files[0];
-  if (!file) return;
-  const genre  = document.getElementById('imageGenre').value;
-  const status = document.getElementById('imageStatus');
-  status.style.color = 'var(--muted)';
-  status.textContent = `📸 Reading notation from ${file.name}... (this takes a few seconds)`;
-
-  const fd = new FormData();
-  fd.append('file', file);
-  fd.append('genre', genre);
-
-  try {
-    const r = await fetch('/api/scores/parse-image', {method:'POST', body: fd});
-    const data = await r.json();
-    if (data.error) {
-      status.style.color = 'var(--red)';
-      status.textContent = '❌ ' + data.error;
-      return;
-    }
-    const sections = Object.entries(data.sections).map(([k,v]) => `${k}:${v}`).join(' ');
-    status.style.color = 'var(--green)';
-    status.textContent = `✅ "${data.title}" → ${genre.toUpperCase()} [${sections}] @ ${data.bpm}BPM`;
-    toast('PATTERNS LOADED FROM IMAGE!');
-  } catch(e) {
-    status.style.color = 'var(--red)';
-    status.textContent = '❌ ' + e.message;
-  }
-}
-
-async function importScore() {
-  const file = document.getElementById('importFile').files[0];
-  if (!file) return;
-  const genre = document.getElementById('importGenre').value;
-  const autoSections = document.getElementById('importAutoSections').checked;
-  const status = document.getElementById('importStatus');
-  status.style.color = 'var(--muted)';
-  status.textContent = `Uploading ${file.name}...`;
-
-  const fd = new FormData();
-  fd.append('file', file);
-  fd.append('genre', genre);
-  fd.append('auto_sections', autoSections ? 'true' : 'false');
-
-  try {
-    const r = await fetch('/api/patterns/import', {method:'POST', body: fd});
-    const data = await r.json();
-    if (data.error) {
-      status.style.color = 'var(--red)';
-      status.textContent = '❌ ' + data.error;
-      return;
-    }
-    const sections = Object.entries(data.sections).map(([k,v]) => `${k}:${v}`).join(' ');
-    status.style.color = 'var(--green)';
-    status.textContent = `✅ Imported "${data.title}" → ${genre.toUpperCase()} [${sections}]`;
-    toast('PATTERNS LOADED!');
-  } catch(e) {
-    status.style.color = 'var(--red)';
-    status.textContent = '❌ ' + e.message;
-  }
-}
-
-// ── TABS ──────────────────────────────────────────────────────────────────────
+// ── Tabs ──────────────────────────────────────────────────────────────────────
 function showTab(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
   document.querySelectorAll('.tab').forEach(t => {
-    if (t.textContent.toLowerCase().trim() === name) t.classList.add('active');
+    if (t.textContent.toLowerCase() === name) t.classList.add('active');
   });
   currentTab = name;
   if (name === 'library') loadLibrary();
-  if (name === 'favs') loadFavourites();
 }
 
-// ── STATUS POLLING ────────────────────────────────────────────────────────────
+// ── Status polling ─────────────────────────────────────────────────────────────
 function startPolling() {
-  setInterval(pollStatus, 1500);
+  pollInterval = setInterval(pollStatus, 1500);
   pollStatus();
 }
 
@@ -1021,186 +563,73 @@ async function pollStatus() {
     const r = await fetch('/api/status');
     const s = await r.json();
     updateUI(s);
-    document.getElementById('ledConn').className = 'led on-green';
-  } catch(e) {
-    document.getElementById('ledConn').className = 'led';
-  }
+  } catch(e) {}
 }
 
 function updateUI(s) {
-  isPlaying = s.playing;
-  const badge = document.getElementById('playBadge');
+  const dot  = document.getElementById('statusDot');
+  const stxt = document.getElementById('statusText');
+
   if (s.playing) {
-    badge.className = 'playing-badge';
-    badge.textContent = 'PLAYING';
-    document.getElementById('ledPlay').className = 'led on-amber';
+    dot.classList.add('playing');
+    stxt.textContent = 'PLAYING';
   } else {
-    badge.className = 'stopped-badge';
-    badge.textContent = 'STOPPED';
-    document.getElementById('ledPlay').className = 'led';
+    dot.classList.remove('playing');
+    stxt.textContent = 'STOPPED';
   }
 
-  document.getElementById('npTitle').textContent = s.title || 'NO SONG LOADED';
-  document.getElementById('npMeta').textContent = s.playing
-    ? ((s.genre||'').toUpperCase() + ' · ' + (s.time_sig||'4/4') + ' · ' + s.bpm + ' BPM')
+  document.getElementById('npTitle').textContent   = s.title || 'NO SONG LOADED';
+  document.getElementById('npMeta').textContent    = s.playing
+    ? `${(s.genre||'').toUpperCase()} · ${s.time_sig||'4/4'}`
     : '—';
-  document.getElementById('npFeel').textContent = s.feel || '';
   document.getElementById('npSection').textContent = s.section ? s.section.toUpperCase() : '';
-  document.getElementById('npBpm').textContent = s.bpm || '—';
+  document.getElementById('npBpm').textContent     = s.bpm || '—';
   document.getElementById('bpmDisplay').textContent = s.bpm || '—';
-  document.getElementById('headerBpm').textContent = s.bpm || '—';
-  if (typeof s.level === 'number') vuLevel = s.level;
 
+  // Section highlight
   document.querySelectorAll('.sec-btn').forEach(b => {
-    const sec = b.textContent.trim().toLowerCase();
-    b.classList.toggle('active', sec === (s.section||'').toLowerCase());
+    b.classList.toggle('active', b.textContent.toLowerCase() === s.section);
   });
 
+  // Setlist nav
   const nav = document.getElementById('setlistNav');
   nav.style.display = (s.setlist && s.setlist.length > 1) ? 'block' : 'none';
 }
 
-// ── REEL + VU ANIMATION ───────────────────────────────────────────────────────
-function animateReels() {
-  if (!isPlaying) return;
-  reelAngle += 2;
-  ['reelL','reelR'].forEach(id => {
-    document.getElementById(id).style.transform = 'rotate(' + reelAngle + 'deg)';
-  });
-}
-
-function buildVuBars() {
-  const w = document.getElementById('vuBars');
-  w.innerHTML = Array.from({length:20},(_,i) => '<div class="vu-seg" id="vu'+i+'"></div>').join('');
-}
-
-function animateVu() {
-  if (!isPlaying) {
-    vuLevel = Math.max(0, vuLevel - 0.05);
-  }
-  // Smooth decay between status polls
-  vuLevel = Math.max(0, vuLevel - 0.015);
-  const active = Math.round(Math.min(1, vuLevel) * 20);
-  for(let i=0;i<20;i++) {
-    const el = document.getElementById('vu'+i);
-    if(i>=active){el.className='vu-seg';continue;}
-    if(i<12) el.className='vu-seg g';
-    else if(i<17) el.className='vu-seg a';
-    else el.className='vu-seg r';
-  }
-}
-
-async function replayCurrentSong() {
-  const title = document.getElementById('npTitle').textContent;
-  if (!title || title === 'NO SONG LOADED') {
-    await fetch('/api/genre', {method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({genre: selectedGenre, bpm: genreBpm})});
-    toast('▶ '+selectedGenre.toUpperCase()+' GROOVE');
-  } else {
-    const input = document.getElementById('searchInput').value.trim();
-    if (input) await playSong(input);
-    else {
-      await fetch('/api/genre', {method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({genre: selectedGenre, bpm: genreBpm})});
-      toast('▶ '+selectedGenre.toUpperCase()+' GROOVE');
-    }
-  }
-}
-
-// ── COMMANDS ──────────────────────────────────────────────────────────────────
+// ── Commands ──────────────────────────────────────────────────────────────────
 async function sendCmd(obj) {
-  await fetch('/api/cmd', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(obj)});
+  await fetch('/api/cmd', { method:'POST',
+    headers:{'Content-Type':'application/json'}, body:JSON.stringify(obj) });
 }
 
 function bpmDelta(d) { sendCmd({cmd:'bpm_delta', value:d}); }
-function jumpSection(sec) { sendCmd({cmd:'jump_section', value:sec}); }
+
+function jumpSection(sec) {
+  sendCmd({cmd:'section', value:sec});
+  // Also try jump_section command
+  sendCmd({cmd:'jump_section', value:sec});
+}
 
 async function stopEngine() {
   await fetch('/api/stop', {method:'POST'});
   toast('STOPPED');
 }
 
-// ── SEARCH ────────────────────────────────────────────────────────────────────
-// ── SEARCH STATE ─────────────────────────────────────────────────────────────
-let searchGenreFilter = '';
-let browseGenreFilter = '';
-let searchMode = 'song';   // 'song' | 'artist'
-let viewMode   = 'list';   // 'list' | 'grid' | 'compact'
-let browseResults = [];
-
-function setSearchMode(mode) {
-  searchMode = mode;
-  document.getElementById('modeSong').style.display   = mode==='song'   ? 'block' : 'none';
-  document.getElementById('modeArtist').style.display = mode==='artist' ? 'block' : 'none';
-  document.getElementById('modeSongBtn').className   = 'btn' + (mode==='song'   ? ' active-mode-btn' : '');
-  document.getElementById('modeArtistBtn').className = 'btn' + (mode==='artist' ? ' active-mode-btn' : '');
-  document.getElementById('searchResult').innerHTML = '';
-}
-
-function setViewMode(mode) {
-  viewMode = mode;
-  ['list','grid','compact'].forEach(m => {
-    const btn = document.getElementById('view'+m.charAt(0).toUpperCase()+m.slice(1)+'Btn');
-    if (btn) btn.classList.toggle('view-btn-active', m===mode);
-  });
-  // Re-render if we have results
-  if (browseResults.length) renderBrowseResults(browseResults);
-}
-
-function buildSearchGenreGrid() {
-  const grid = document.getElementById('searchGenreGrid');
-  if (!grid) return;
-  const all = ['', ...GENRES];
-  grid.innerHTML = all.map(g => {
-    const label = g ? g.toUpperCase() : 'ANY';
-    return `<div class="genre-btn ${g===searchGenreFilter?'active':''}" onclick="setSearchGenre('${g}')">${label}</div>`;
-  }).join('');
-}
-
-function buildBrowseGenreGrid() {
-  const grid = document.getElementById('browseGenreGrid');
-  if (!grid) return;
-  const all = ['', ...GENRES];
-  grid.innerHTML = all.map(g => {
-    const label = g ? g.toUpperCase() : 'ANY';
-    return `<div class="genre-btn ${g===browseGenreFilter?'active':''}" onclick="setBrowseGenre('${g}')">${label}</div>`;
-  }).join('');
-}
-
-function setSearchGenre(g) { searchGenreFilter=g; buildSearchGenreGrid(); }
-function setBrowseGenre(g) { browseGenreFilter=g; buildBrowseGenreGrid(); }
-
-function clearSearch() {
-  const si = document.getElementById('searchInput');
-  const ai = document.getElementById('artistInput');
-  const bi = document.getElementById('browseArtistInput');
-  if (si) si.value='';
-  if (ai) ai.value='';
-  if (bi) bi.value='';
-  searchGenreFilter=''; browseGenreFilter='';
-  browseResults=[];
-  buildSearchGenreGrid(); buildBrowseGenreGrid();
-  document.getElementById('searchResult').innerHTML='';
-}
-
+// ── Search ────────────────────────────────────────────────────────────────────
 async function searchSong() {
-  const song   = document.getElementById('searchInput').value.trim();
-  const artist = document.getElementById('artistInput').value.trim();
-  if (!song) { toast('ENTER A SONG TITLE'); return; }
-  const q = artist ? song+' '+artist : song;
+  const q = document.getElementById('searchInput').value.trim();
+  if (!q) return;
   const el = document.getElementById('searchResult');
   el.innerHTML = '<div style="padding:16px;color:var(--muted)"><span class="spinner"></span>LOOKING UP...</div>';
+
   try {
     const r = await fetch('/api/song/lookup', {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({song:q})
+      body: JSON.stringify({song: q})
     });
     const data = await r.json();
-    if (data.error) { el.innerHTML='<div class="empty">NOT FOUND — TRY A DIFFERENT SPELLING</div>'; return; }
-    if (searchGenreFilter && data.genre && data.genre.toLowerCase() !== searchGenreFilter.toLowerCase()) {
-      el.innerHTML = '<div class="empty">FOUND AS ' + (data.genre||'').toUpperCase() + ' — TAP GENRE FILTER TO CLEAR</div>';
+    if (data.error) {
+      el.innerHTML = `<div class="empty">NOT FOUND — TRY A DIFFERENT SPELLING</div>`;
       return;
     }
     renderSongCard(el, data, q);
@@ -1209,193 +638,53 @@ async function searchSong() {
   }
 }
 
-async function browseArtist() {
-  const artist = document.getElementById('browseArtistInput').value.trim();
-  if (!artist) { toast('ENTER AN ARTIST NAME'); return; }
-  const el = document.getElementById('searchResult');
-  el.innerHTML = '<div style="padding:16px;color:var(--muted)"><span class="spinner"></span>BROWSING '+artist.toUpperCase()+'...</div>';
-  try {
-    const r = await fetch('/api/artist/browse', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({artist, genre: browseGenreFilter||null})
-    });
-    const data = await r.json();
-    if (data.error) { el.innerHTML='<div class="empty">'+data.error.toUpperCase()+'</div>'; return; }
-    browseResults = data.songs || [];
-    if (!browseResults.length) { el.innerHTML='<div class="empty">NO RESULTS FOUND</div>'; return; }
-    renderBrowseResults(browseResults);
-  } catch(e) {
-    el.innerHTML = '<div class="empty">ERROR — CHECK CONNECTION</div>';
-  }
-}
-
-function renderBrowseResults(songs) {
-  const el = document.getElementById('searchResult');
-  const artist = document.getElementById('browseArtistInput').value.trim();
-  const header = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-    <div style="font-family:'Bebas Neue',cursive;font-size:18px;letter-spacing:2px;color:var(--amber2)">${escQ(artist).toUpperCase()} — ${songs.length} SONGS</div>
-  </div>`;
-
-  let html = '';
-  if (viewMode === 'grid') {
-    html = '<div class="results-grid">' + songs.map(s => songItemHtml(s, 'grid')).join('') + '</div>';
-  } else if (viewMode === 'compact') {
-    html = songs.map(s => songItemHtml(s, 'compact')).join('');
-  } else {
-    html = songs.map(s => songItemHtml(s, 'list')).join('');
-  }
-  el.innerHTML = header + html;
-}
-
-function songItemHtml(s, mode) {
-  const q = escQ(s.song_name || s.title);
-  const title = escQ(s.title||s.song_name||'');
-  const meta = `${(s.genre||'').toUpperCase()} · ${s.bpm||'?'} BPM · ${s.time_sig||'4/4'}`;
-  const feel = s.feel || '';
-
-  if (mode === 'compact') {
-    return `<div class="result-compact">
-      <div class="result-compact-info" onclick="lookupAndPlay('${q}')">
-        <div class="result-compact-title">${s.title||s.song_name}</div>
-        <div class="result-compact-meta">${meta}</div>
-      </div>
-      <div class="result-compact-actions">
-        <div class="icon-btn" onclick="lookupAndPlay('${q}')" style="color:var(--green)">▶</div>
-        <div class="icon-btn" onclick="lookupAndAdd('${q}')">+</div>
-        <div class="icon-btn" onclick="lookupAndFav('${q}','${title}')">❤️</div>
-      </div>
-    </div>`;
-  }
-
-  if (mode === 'grid') {
-    return `<div class="song-card" style="margin-bottom:0">
-      <div class="song-card-title" style="font-size:14px">${s.title||s.song_name}</div>
-      <div class="song-card-meta">${meta}</div>
-      <div class="song-card-actions" style="margin-top:8px">
-        <div class="btn btn-primary btn-sm" onclick="lookupAndPlay('${q}')" style="font-size:13px;padding:8px">▶</div>
-        <div class="btn btn-sm" onclick="lookupAndAdd('${q}')" style="font-size:13px;padding:8px">+</div>
-        <div class="btn btn-sm" onclick="lookupAndFav('${q}','${title}')" style="font-size:13px;padding:8px">❤️</div>
-      </div>
-    </div>`;
-  }
-
-  // list (default)
-  return `<div class="artist-song-item">
-    <div class="artist-song-title">${s.title||s.song_name}</div>
-    <div class="artist-song-meta">${meta}${feel ? ' · '+feel : ''}</div>
-    <div class="artist-song-actions">
-      <div class="btn btn-primary btn-sm" onclick="lookupAndPlay('${q}')">▶ PLAY</div>
-      <div class="btn btn-sm" onclick="lookupAndAdd('${q}')">+ SETLIST</div>
-      <div class="btn btn-sm" onclick="lookupAndFav('${q}','${title}')">❤️ FAV</div>
-    </div>
-  </div>`;
-}
-
-async function lookupAndPlay(songName) {
-  toast('LOOKING UP...');
-  try {
-    const r = await fetch('/api/song/lookup', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({song:songName})});
-    const d = await r.json();
-    if (d.error) { toast('NOT FOUND'); return; }
-    await playSong(songName);
-  } catch(e) { toast('ERROR'); }
-}
-
-async function lookupAndAdd(songName) {
-  try {
-    await fetch('/api/song/lookup', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({song:songName})});
-    await addSongToSetlist(songName);
-  } catch(e) { toast('ERROR'); }
-}
-
-async function lookupAndFav(songName, title) {
-  try {
-    await fetch('/api/song/lookup', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({song:songName})});
-    await addFavourite(songName, title);
-  } catch(e) { toast('ERROR'); }
-}
-
 function renderSongCard(el, song, query) {
-  const safQ = escQ(query);
-  const safT = escQ(song.title||query);
   el.innerHTML = `
     <div class="song-card">
       <div class="song-card-title">${song.title || query}</div>
-      <div class="song-card-meta">${(song.genre||'').toUpperCase()} · ${song.time_sig||'4/4'}</div>
-      <div class="song-card-meta" style="margin-bottom:4px">${song.feel||''}</div>
-      <div style="display:flex;align-items:center;gap:8px;margin:10px 0 4px">
-        <span style="font-size:9px;letter-spacing:2px;color:var(--muted)">BPM</span>
-        <input type="number" id="bpm-override-${safQ}"
-          value="${song.bpm||120}" min="40" max="300"
-          style="background:var(--vu-bg);border:1px solid var(--amber-dim);border-radius:4px;
-                 color:var(--amber2);font-family:'VT323',monospace;font-size:28px;
-                 width:80px;padding:4px 8px;text-align:center;"
-          oninput="previewBpm(this.value)"
-          onchange="saveBpmOverride('${safQ}', this.value)">
-        <span style="font-size:9px;letter-spacing:1px;color:var(--muted)">TAP TO EDIT</span>
-      </div>
+      <div class="song-card-meta">${(song.genre||'').toUpperCase()} · ${song.bpm||'?'} BPM · ${song.time_sig||'4/4'}</div>
+      <div class="song-card-meta" style="margin-bottom:10px">${song.feel||''}</div>
       <div class="song-card-actions">
-        <div class="btn btn-primary btn-sm" onclick="playSongWithBpm('${safQ}')">▶ PLAY</div>
-        <div class="btn btn-sm" onclick="addSongToSetlist('${safQ}')">+ SETLIST</div>
-        <div class="btn btn-sm" onclick="toggleFavourite('${safQ}','${safT}')" id="fav-btn-${safQ}" style="min-width:44px">❤️</div>
+        <button class="btn btn-primary btn-sm" onclick="playSong('${escQ(query)}')">▶ PLAY</button>
+        <button class="btn btn-ghost btn-sm" onclick="addSongToSetlist('${escQ(query)}')">+ SETLIST</button>
       </div>
     </div>`;
-  checkFavBtn(safQ);
-}
-
-function previewBpm(val) {
-  // Just visual feedback — no API call while typing
-}
-
-async function saveBpmOverride(songName, bpm) {
-  bpm = parseInt(bpm);
-  if (isNaN(bpm) || bpm < 40 || bpm > 300) return;
-  const r = await fetch('/api/song/bpm', {
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({song: songName, bpm})
-  });
-  const d = await r.json();
-  if (d.ok) toast('BPM SAVED: ' + bpm);
-}
-
-async function playSongWithBpm(songName) {
-  const input = document.getElementById('bpm-override-' + songName);
-  if (input) {
-    const bpm = parseInt(input.value);
-    if (!isNaN(bpm) && bpm >= 40 && bpm <= 300) {
-      await saveBpmOverride(songName, bpm);
-    }
-  }
-  await playSong(songName);
 }
 
 async function playSong(songName) {
-  const r = await fetch('/api/song/play', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({song:songName})});
+  const r = await fetch('/api/song/play', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({song: songName})
+  });
   const d = await r.json();
-  if (d.error) { toast('ERROR: '+d.error); return; }
-  toast('▶ '+(d.title||songName).toUpperCase());
+  if (d.error) { toast('ERROR: ' + d.error); return; }
+  toast('▶ ' + (d.title || songName).toUpperCase());
   showTab('play');
 }
 
-// ── SETLIST ───────────────────────────────────────────────────────────────────
+// ── Setlist ───────────────────────────────────────────────────────────────────
+let setlist = [];
+let setlistIdx = -1;
+
 function renderSetlist() {
   const el = document.getElementById('setlistItems');
   const ctrl = document.getElementById('setlistControls');
-  if (!setlist.length) {
+  if (setlist.length === 0) {
     el.innerHTML = '<div class="empty">NO SONGS — ADD SOME ABOVE</div>';
-    ctrl.style.display = 'none'; return;
+    ctrl.style.display = 'none';
+    return;
   }
   ctrl.style.display = 'block';
-  el.innerHTML = setlist.map((s,i) => `
-    <div class="setlist-item ${i===setlistIdx?'active-song':''}">
+  el.innerHTML = setlist.map((s, i) => `
+    <div class="setlist-item ${i === setlistIdx ? 'active-song' : ''}">
       <div class="setlist-num">${i+1}</div>
       <div class="setlist-info">
-        <div class="setlist-title">${s.title||s.song_name}</div>
+        <div class="setlist-title">${s.title || s.song_name}</div>
         <div class="setlist-meta">${(s.genre||'').toUpperCase()} · ${s.bpm||'?'} BPM · ${s.time_sig||'4/4'}</div>
       </div>
       <div class="setlist-actions">
         <div class="icon-btn" onclick="playSetlist(${i})">▶</div>
-        <div class="icon-btn" onclick="removeFromSetlist(${i})" style="color:var(--red)">✕</div>
+        <div class="icon-btn" onclick="removeFromSetlist(${i})">✕</div>
       </div>
     </div>`).join('');
 }
@@ -1403,19 +692,36 @@ function renderSetlist() {
 async function addToSetlist() {
   const q = document.getElementById('setlistInput').value.trim();
   if (!q) return;
-  const r = await fetch('/api/song/lookup', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({song:q})});
+
+  // Look up first if not in cache
+  const r = await fetch('/api/song/lookup', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({song: q})
+  });
   const data = await r.json();
   if (data.error) { toast('NOT FOUND'); return; }
+
   setlist.push(data);
-  await fetch('/api/setlist/add', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({song:q})});
+  // Sync to server
+  await fetch('/api/setlist/add', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({song: q})
+  });
   document.getElementById('setlistInput').value = '';
   renderSetlist();
-  toast('ADDED: '+(data.title||q).toUpperCase());
+  toast('ADDED: ' + (data.title||q).toUpperCase());
 }
 
 async function addSongToSetlist(query) {
-  await fetch('/api/setlist/add', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({song:query})});
-  const r = await fetch('/api/song/lookup', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({song:query})});
+  await fetch('/api/setlist/add', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({song: query})
+  });
+  // Also add locally
+  const r = await fetch('/api/song/lookup', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({song: query})
+  });
   const data = await r.json();
   if (!data.error) { setlist.push(data); renderSetlist(); }
   toast('ADDED TO SETLIST');
@@ -1423,33 +729,42 @@ async function addSongToSetlist(query) {
 }
 
 function removeFromSetlist(idx) {
-  setlist.splice(idx,1);
-  fetch('/api/setlist/remove', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({idx})});
+  setlist.splice(idx, 1);
+  fetch('/api/setlist/remove', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({idx})
+  });
   renderSetlist();
 }
 
 async function playSetlist(idx) {
-  setlistIdx = idx; renderSetlist();
-  await fetch('/api/setlist/play', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({idx})});
+  setlistIdx = idx;
+  renderSetlist();
+  await fetch('/api/setlist/play', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({idx})
+  });
   showTab('play');
-  toast('▶ '+(setlist[idx]?.title||'').toUpperCase());
+  toast('▶ ' + (setlist[idx]?.title || '').toUpperCase());
 }
 
 async function nextSong() {
   const r = await fetch('/api/setlist/next', {method:'POST'});
   const d = await r.json();
   if (!d.ok) { toast('END OF SETLIST'); return; }
-  setlistIdx++; renderSetlist();
+  setlistIdx++;
+  renderSetlist();
 }
 
 async function prevSong() {
   const r = await fetch('/api/setlist/prev', {method:'POST'});
   const d = await r.json();
   if (!d.ok) { toast('FIRST SONG'); return; }
-  setlistIdx--; renderSetlist();
+  setlistIdx--;
+  renderSetlist();
 }
 
-// ── LIBRARY ───────────────────────────────────────────────────────────────────
+// ── Library ───────────────────────────────────────────────────────────────────
 async function loadLibrary() {
   const el = document.getElementById('libraryItems');
   el.innerHTML = '<div class="empty"><span class="spinner"></span>LOADING...</div>';
@@ -1465,120 +780,35 @@ async function loadLibrary() {
 
 function renderLibrary(songs) {
   const el = document.getElementById('libraryItems');
-  if (!songs.length) { el.innerHTML='<div class="empty">NO SONGS IN CACHE</div>'; return; }
+  if (!songs.length) { el.innerHTML = '<div class="empty">NO SONGS IN CACHE</div>'; return; }
   el.innerHTML = songs.map(s => `
-    <div class="cache-item">
-      <div class="cache-info" onclick="playFromLibrary('${escQ(s.song_name)}','${escQ(s.title)}')" style="flex:1;cursor:pointer">
+    <div class="cache-item" onclick="playFromLibrary('${escQ(s.song_name)}', '${escQ(s.title)}')">
+      <div class="cache-info">
         <div class="cache-title">${s.title}</div>
         <div class="cache-meta">${(s.genre||'').toUpperCase()} · ${s.bpm} BPM · ${s.time_sig||'4/4'}</div>
       </div>
-      <div style="display:flex;gap:6px;align-items:center">
-        <div style="color:var(--muted);font-size:20px;cursor:pointer" onclick="playFromLibrary('${escQ(s.song_name)}','${escQ(s.title)}')">▶</div>
-        <div style="font-size:18px;cursor:pointer;padding:4px" onclick="toggleFavourite('${escQ(s.song_name)}','${escQ(s.title)}')" id="fav-lib-${escQ(s.song_name)}">🤍</div>
-      </div>
+      <div style="color:var(--muted);font-size:18px">▶</div>
     </div>`).join('');
 }
 
 function filterLibrary() {
   const q = document.getElementById('filterInput').value.toLowerCase();
-  renderLibrary(cacheData.filter(s => s.title.toLowerCase().includes(q)||s.genre.toLowerCase().includes(q)));
+  const filtered = cacheData.filter(s =>
+    s.title.toLowerCase().includes(q) || s.genre.toLowerCase().includes(q)
+  );
+  renderLibrary(filtered);
 }
 
-async function playFromLibrary(songName) { await playSong(songName); }
-
-// ── FAVOURITES ────────────────────────────────────────────────────────────────
-let favourites = [];
-
-async function loadFavourites() {
-  try {
-    const r = await fetch('/api/favourites');
-    const d = await r.json();
-    favourites = d.favourites || [];
-    renderFavourites();
-    updateAllFavBtns();
-  } catch(e) {}
+async function playFromLibrary(songName, title) {
+  await playSong(songName);
 }
 
-function renderFavourites() {
-  const el = document.getElementById('favsItems');
-  if (!el) return;
-  if (!favourites.length) {
-    el.innerHTML = '<div class="empty">NO FAVOURITES YET — TAP ❤️ ON ANY SONG</div>';
-    return;
-  }
-  el.innerHTML = favourites.map((s,i) => `
-    <div class="cache-item">
-      <div class="cache-info" onclick="playSong('${escQ(s.song_name)}')" style="flex:1;cursor:pointer">
-        <div class="cache-title">${s.title||s.song_name}</div>
-        <div class="cache-meta">${(s.genre||'').toUpperCase()} · ${s.bpm||'?'} BPM · ${s.time_sig||'4/4'}</div>
-        <div class="cache-meta">${s.feel||''}</div>
-      </div>
-      <div style="display:flex;gap:6px;align-items:center">
-        <div style="color:var(--muted);font-size:20px;cursor:pointer" onclick="playSong('${escQ(s.song_name)}')">▶</div>
-        <div style="font-size:18px;cursor:pointer;padding:4px;color:var(--red)"
-          onclick="removeFavourite('${escQ(s.song_name)}')">❤️</div>
-        <div class="icon-btn" onclick="addSongToSetlist('${escQ(s.song_name)}')" style="font-size:11px;letter-spacing:1px">+SET</div>
-      </div>
-    </div>`).join('');
-}
-
-async function toggleFavourite(songName, title) {
-  const already = favourites.some(f => f.song_name === songName);
-  if (already) {
-    await removeFavourite(songName);
-  } else {
-    await addFavourite(songName, title);
-  }
-}
-
-async function addFavourite(songName, title) {
-  const r = await fetch('/api/favourites/add', {
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({song: songName})
-  });
-  const d = await r.json();
-  if (d.error) { toast('NOT IN CACHE — SEARCH IT FIRST'); return; }
-  toast('❤️ ADDED: ' + (title||songName).toUpperCase());
-  await loadFavourites();
-}
-
-async function removeFavourite(songName) {
-  await fetch('/api/favourites/remove', {
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({song: songName})
-  });
-  toast('🤍 REMOVED FROM FAVOURITES');
-  await loadFavourites();
-}
-
-function isFavourited(songName) {
-  return favourites.some(f => f.song_name === songName);
-}
-
-function updateAllFavBtns() {
-  // Update any visible fav buttons
-  document.querySelectorAll('[id^="fav-"]').forEach(el => {
-    const sn = el.id.replace('fav-btn-','').replace('fav-lib-','');
-    el.textContent = isFavourited(sn) ? '❤️' : '🤍';
-    el.style.color = isFavourited(sn) ? 'var(--red)' : '';
-  });
-}
-
-function checkFavBtn(songName) {
-  setTimeout(() => {
-    const btn = document.getElementById('fav-btn-' + songName);
-    if (btn) {
-      btn.textContent = isFavourited(songName) ? '❤️' : '🤍';
-      btn.style.color = isFavourited(songName) ? 'var(--red)' : '';
-    }
-  }, 100);
-}
-
-// ── GENRE ─────────────────────────────────────────────────────────────────────
+// ── Genre ─────────────────────────────────────────────────────────────────────
 function buildGenreGrid() {
-  document.getElementById('genreGrid').innerHTML = GENRES.map(g =>
-    `<div class="genre-btn ${g===selectedGenre?'active':''}" onclick="selectGenre('${g}')">${g.toUpperCase()}</div>`
-  ).join('');
+  const el = document.getElementById('genreGrid');
+  el.innerHTML = GENRES.map(g => `
+    <div class="genre-btn ${g === selectedGenre ? 'active' : ''}"
+         onclick="selectGenre('${g}')">${g.toUpperCase()}</div>`).join('');
 }
 
 function selectGenre(g) {
@@ -1589,243 +819,21 @@ function selectGenre(g) {
 }
 
 function adjustGenreBpm(d) {
-  genreBpm = Math.max(40, Math.min(220, genreBpm+d));
+  genreBpm = Math.max(40, Math.min(220, genreBpm + d));
   document.getElementById('genreBpmDisplay').textContent = genreBpm;
 }
 
 async function playGenre() {
-  await fetch('/api/genre', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({genre:selectedGenre,bpm:genreBpm})});
-  toast('▶ '+selectedGenre.toUpperCase()+' '+genreBpm+' BPM');
+  const r = await fetch('/api/genre', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({genre: selectedGenre, bpm: genreBpm})
+  });
+  toast('▶ ' + selectedGenre.toUpperCase() + ' ' + genreBpm + ' BPM');
   showTab('play');
 }
 
-function buildTimeSigGrid() {
-  document.getElementById('timesigGrid').innerHTML = TIMESIGS.map(t =>
-    `<div class="timesig-btn ${t===selectedTimeSig?'active':''}" onclick="selectTimeSig('${t}')">${t}</div>`
-  ).join('');
-}
-
-function selectTimeSig(t) {
-  selectedTimeSig = t;
-  buildTimeSigGrid();
-}
-
-// ── LOOPER ────────────────────────────────────────────────────────────────────
-async function pollLooper() {
-  try {
-    const r = await fetch('/api/looper/status');
-    looperState = await r.json();
-    if (currentTab === 'looper') renderLooper();
-    const level = (looperState.input_level||0)*5;
-    document.getElementById('inputMeter').style.width = Math.min(100,level*100)+'%';
-    if (looperState.recording) {
-      document.getElementById('ledRec').className = 'led on-red';
-    } else {
-      document.getElementById('ledRec').className = 'led';
-    }
-  } catch(e) {}
-}
-
-function drawWaveform(canvas, layerIdx, hasAudio, isRec) {
-  const ctx = canvas.getContext('2d');
-  canvas.width = canvas.offsetWidth || 300;
-  const w = canvas.width, h = 40;
-  ctx.clearRect(0,0,w,h);
-  ctx.fillStyle = '#040708';
-  ctx.fillRect(0,0,w,h);
-
-  if (!hasAudio && !isRec) {
-    ctx.fillStyle = '#1e2018';
-    ctx.font = '9px Share Tech Mono,monospace';
-    ctx.textAlign = 'center';
-    ctx.fillText('EMPTY', w/2, h/2+3);
-    return;
-  }
-  const col = WAVE_COLORS[layerIdx];
-  ctx.strokeStyle = col;
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  const pts = Array.from({length:120},(_,x) =>
-    0.35*Math.sin(x*0.45+layerIdx*1.3)+0.18*Math.sin(x*1.2+layerIdx*2.1)+0.08*Math.sin(x*3.1+layerIdx)
-  );
-  for(let x=0;x<w;x++) {
-    const idx = Math.floor(x/w*pts.length);
-    const y = h/2 + pts[idx]*(h/2-4);
-    x===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
-  }
-  ctx.stroke();
-  if (isRec) {
-    ctx.fillStyle = 'rgba(204,34,0,0.12)';
-    ctx.fillRect(0,0,w,h);
-  }
-}
-
-function renderLooper() {
-  if (!looperState) return;
-  const el = document.getElementById('looperLayers');
-  el.innerHTML = looperState.layers.map((layer,i) => {
-    const fx = looperState.fx[i] || {};
-    const isRec = looperState.recording && looperState.rec_layer===i;
-    const hasAudio = layer.has_audio;
-    const isCountdown = looperState.countdown && looperState.rec_layer===i;
-    const recPct = isRec ? Math.round((looperState.rec_progress||0)*100) : 0;
-    const recLeft = isRec ? (looperState.rec_remaining||0).toFixed(1) : 0;
-    const statusColor = isRec ? 'var(--red)' : hasAudio ? (layer.playing ? 'var(--green)' : 'var(--cream2)') : 'var(--muted)';
-    const statusText = isRec ? '⏺ RECORDING' : isCountdown ? '⏱ COUNT IN' : hasAudio ? (layer.playing ? '▶ PLAYING' : '⏸ PAUSED') : 'EMPTY';
-    const lenStr = hasAudio ? layer.length_sec.toFixed(1)+'s' : '';
-    return `
-    <div class="looper-layer ${isRec?'recording':''} ${hasAudio&&!isRec?'has-audio':''}">
-      <div class="layer-header">
-        <div class="layer-badge ${LAYER_CLASSES[i]}">${i+1}</div>
-        <div style="flex:1">
-          <div class="layer-status-name" style="color:${statusColor}">${statusText}</div>
-          <div class="layer-duration">${lenStr}</div>
-        </div>
-        <div class="layer-btns">
-          <div class="lbtn rec-btn ${isRec?'recording':''}"
-            onclick="${isRec?'stopRecording()':'startRecording('+i+')'}"
-            title="${isRec?'Stop':'Record'}">
-            ${isRec?'⏹':'⏺'}
-          </div>
-          ${hasAudio?`
-          <div class="lbtn play-btn ${layer.playing?'active-state':''}"
-            onclick="toggleLayer(${i})" title="${layer.playing?'Pause':'Play'}">
-            ${layer.playing?'⏸':'▶'}
-          </div>
-          <div class="lbtn mute-btn ${layer.muted?'muted':''}"
-            onclick="muteLayer(${i})" title="Mute"
-            style="${layer.muted?'':''}">M</div>
-          <div class="lbtn" onclick="clearLayer(${i})" title="Clear"
-            style="color:var(--red)">✕</div>`:''}
-        </div>
-      </div>
-      <canvas class="waveform" id="wave${i}" height="40"></canvas>
-      <div class="rec-countdown ${isRec?'active':''}">${recLeft}s LEFT</div>
-      <div class="rec-bar-wrap ${isRec?'active':''}">
-        <div class="rec-bar-fill" style="width:${recPct}%"></div>
-      </div>
-      ${hasAudio?`
-      <div class="vol-wrap">
-        <label>VOLUME</label>
-        <input type="range" class="vol-slider" min="0" max="150" step="1"
-          value="${Math.round(layer.volume*100)}"
-          oninput="setLayerVolume(${i},this.value/100)">
-      </div>
-      <div class="fx-grid">
-        <div class="fx-item">
-          <label>REVERB</label>
-          <input type="range" class="fx-slider" min="0" max="100" step="1"
-            value="${Math.round((fx.reverb||0)*100)}"
-            oninput="setFx(${i},'reverb',this.value/100)">
-        </div>
-        <div class="fx-item">
-          <label>DELAY</label>
-          <input type="range" class="fx-slider" min="0" max="100" step="1"
-            value="${Math.round((fx.delay_wet||0)*100)}"
-            oninput="setFx(${i},'delay_wet',this.value/100)">
-        </div>
-        <div class="fx-item">
-          <label>DRIVE</label>
-          <input type="range" class="fx-slider" min="0" max="100" step="1"
-            value="${Math.round((fx.distortion||0)*100)}"
-            oninput="setFx(${i},'distortion',this.value/100)">
-        </div>
-        <div class="fx-item">
-          <label>CHORUS</label>
-          <input type="range" class="fx-slider" min="0" max="100" step="1"
-            value="${Math.round((fx.chorus||0)*100)}"
-            oninput="setFx(${i},'chorus',this.value/100)">
-        </div>
-      </div>
-      <div class="pitch-row">
-        <label>PITCH</label>
-        <input type="range" min="-12" max="12" step="1" value="${fx.pitch||0}"
-          style="flex:1;accent-color:var(--amber)"
-          oninput="setFx(${i},'pitch',parseFloat(this.value));this.nextElementSibling.textContent=this.value">
-        <span class="pitch-val">${fx.pitch||0}</span>
-      </div>`:''}
-    </div>`;
-  }).join('');
-
-  // Draw waveforms after DOM inserts
-  looperState.layers.forEach((layer,i) => {
-    const canvas = document.getElementById('wave'+i);
-    if (canvas) {
-      const isRec = looperState.recording && looperState.rec_layer===i;
-      drawWaveform(canvas, i, layer.has_audio, isRec);
-    }
-  });
-
-  // Monitor button
-  const monBtn = document.getElementById('monitorBtn');
-  if (monBtn) {
-    monBtn.textContent = looperState.monitor ? 'MON ON' : 'MON OFF';
-    monBtn.style.borderColor = looperState.monitor ? 'var(--green)' : '';
-    monBtn.style.color = looperState.monitor ? 'var(--green)' : '';
-  }
-}
-
-async function setCountin(val) { countinBars = parseInt(val); }
-
-async function startRecording(layerIdx) {
-  const bars = parseInt(document.getElementById('barsSelect').value);
-  await fetch('/api/looper/record/start', {method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({layer:layerIdx,bars,countin:countinBars})});
-  toast('⏺ RECORDING LAYER '+(layerIdx+1));
-}
-
-async function stopRecording() {
-  await fetch('/api/looper/record/stop', {method:'POST'});
-  toast('⏹ LOOP SAVED');
-}
-
-async function toggleLayer(idx) {
-  const layer = looperState?.layers[idx];
-  if (!layer) return;
-  const ep = layer.playing ? '/api/looper/layer/stop' : '/api/looper/layer/play';
-  await fetch(ep, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({layer:idx})});
-}
-
-async function muteLayer(idx) {
-  const layer = looperState?.layers[idx];
-  if (!layer) return;
-  await fetch('/api/looper/mute', {method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({layer:idx,muted:!layer.muted})});
-}
-
-async function clearLayer(idx) {
-  await fetch('/api/looper/layer/clear', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({layer:idx})});
-}
-
-async function clearAllLoops() {
-  await fetch('/api/looper/clear/all', {method:'POST'});
-  toast('ALL LOOPS CLEARED');
-}
-
-async function setLayerVolume(idx, vol) {
-  await fetch('/api/looper/volume', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({layer:idx,volume:vol})});
-}
-
-const _fxDeb = {};
-async function setFx(idx, param, value) {
-  const key = idx+'_'+param;
-  clearTimeout(_fxDeb[key]);
-  _fxDeb[key] = setTimeout(async () => {
-    await fetch('/api/looper/fx', {method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({layer:idx,fx:{[param]:parseFloat(value)}})});
-  }, 150);
-}
-
-async function toggleMonitor() {
-  await fetch('/api/looper/monitor', {method:'POST'});
-}
-
-async function setBars(val) {
-  await fetch('/api/looper/bars', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({bars:parseInt(val)})});
-}
-
-// ── UTILS ─────────────────────────────────────────────────────────────────────
-function escQ(s) { return (s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+// ── Utils ─────────────────────────────────────────────────────────────────────
+function escQ(s) { return (s||'').replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
 
 let toastTimer;
 function toast(msg) {
@@ -1833,7 +841,7 @@ function toast(msg) {
   el.textContent = msg;
   el.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2000);
 }
 
 init();
