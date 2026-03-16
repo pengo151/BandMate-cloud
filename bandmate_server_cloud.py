@@ -17,6 +17,7 @@ Differences from Pi version:
 import json
 import os
 import threading
+import eventlet
 import time
 import hashlib
 import random
@@ -315,7 +316,9 @@ def run_groove_cloud(genre, bpm, time_sig="4/4", structure=None, song_title="", 
                 if remaining <= 0:
                     break
                 if remaining > 0.002:
-                    time.sleep(0.001)
+                    eventlet.sleep(0)
+                else:
+                    eventlet.sleep(0)
 
             if _status.get("muted"):
                 continue
@@ -325,7 +328,7 @@ def run_groove_cloud(genre, bpm, time_sig="4/4", structure=None, song_title="", 
             human_off = _jitter(rng, human_ms)
             extra = swing_off + human_off
             if extra > 0.001:
-                time.sleep(extra)
+                eventlet.sleep(extra)
 
             beat_steps = set(range(0, steps_per_bar, max(1, steps_per_bar // 4)))
 
