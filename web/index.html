@@ -407,6 +407,9 @@
   <div class="tab" onclick="showTab('setlist')">SETLIST</div>
   <div class="tab" onclick="showTab('library')">LIBRARY</div>
   <div class="tab" onclick="showTab('genre')">GENRE</div>
+  <div class="tab" onclick="showTab('favs')">FAV</div>
+  <div class="tab" onclick="showTab('looper')">LOOPER</div>
+  <div class="tab" onclick="showTab('scores')">SCORES</div>
 </div>
 
 <!-- ── PLAY TAB ── -->
@@ -845,6 +848,92 @@ function toast(msg) {
 }
 
 init();
+
+async function searchScores() {
+  const query = document.getElementById('scoresQuery').value.trim();
+  if (!query) return;
+  const el = document.getElementById('scoresResults');
+  el.innerHTML = '<div style="color:var(--muted);font-size:12px;">Searching...</div>';
+  const r = await fetch('/api/scores/search', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query})});
+  const data = await r.json();
+  el.innerHTML = data.results.map(res =>
+    '<div class="song-card" style="margin-bottom:8px;"><div class="song-card-title">' + res.title + '</div>' +
+    '<div class="song-card-meta">' + res.note + '</div>' +
+    '<div class="song-card-actions"><a href="' + res.url + '" target="_blank" class="btn btn-primary btn-sm" style="text-decoration:none;">BROWSE</a></div></div>'
+  ).join('') + '<div style="color:var(--muted);font-size:10px;margin-top:6px;">' + data.tip + '</div>';
+}
+
+async function parseImageScore() {
+  const file = document.getElementById('imageFile').files[0];
+  if (!file) return;
+  const genre = document.getElementById('imageGenre').value;
+  const status = document.getElementById('imageStatus');
+  status.style.color = 'var(--muted)';
+  status.textContent = 'Reading notation... (few seconds)';
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('genre', genre);
+  try {
+    const r = await fetch('/api/scores/parse-image', {method:'POST', body: fd});
+    const data = await r.json();
+    if (data.error) { status.style.color='var(--red)'; status.textContent='ERROR: '+data.error; return; }
+    const sections = Object.entries(data.sections).map(([k,v]) => k+':'+v).join(' ');
+    status.style.color = 'var(--green)';
+    status.innerHTML = 'OK: "' + data.title + '" [' + sections + '] @ ' + data.bpm + 'BPM' +
+      '<div style="margin-top:10px;"><div class="btn btn-primary" onclick="playImported('' + data.genre + '',' + data.bpm + ')">PLAY IMPORTED</div></div>';
+    toast('PATTERNS LOADED!');
+  } catch(e) { status.style.color='var(--red)'; status.textContent='ERROR: '+e.message; }
+}
+
+async function playImported(genre, bpm) {
+  await fetch('/api/genre', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({genre,bpm})});
+  showTab('play');
+  toast('PLAYING IMPORTED PATTERNS');
+}
 </script>
+
+<!-- FAVS TAB -->
+<div class="page" id="tab-favs">
+  <div class="np-section">
+    <div class="slabel">FAVOURITES</div>
+    <div id="favsList"><div class="empty">NO FAVOURITES YET</div></div>
+  </div>
+</div>
+
+<!-- LOOPER TAB -->
+<div class="page" id="tab-looper">
+  <div class="np-section">
+    <div class="slabel">LOOPER</div>
+    <div style="color:var(--muted);font-size:12px;">Looper requires Pi hardware — not available in cloud mode.</div>
+  </div>
+</div>
+
+<!-- SCORES TAB -->
+<div class="page" id="tab-scores">
+  <div class="np-section">
+    <div class="slabel">SEARCH MUSESCORE</div>
+    <div style="display:flex;gap:8px;margin-bottom:10px;">
+      <input id="scoresQuery" class="retro-select" style="flex:1;padding:10px;font-size:14px;" placeholder="Song name e.g. Everlong" onkeydown="if(event.key==='Enter')searchScores()"/>
+      <div class="btn btn-primary btn-sm" onclick="searchScores()">FIND</div>
+    </div>
+    <div id="scoresResults"></div>
+  </div>
+  <div class="np-section" style="margin-top:12px;">
+    <div class="slabel">SCAN DRUM SHEET IMAGE</div>
+    <div style="margin-bottom:8px;color:var(--muted);font-size:11px;">Screenshot of drum notation — Claude reads and extracts patterns.</div>
+    <select id="imageGenre" class="retro-select" style="width:100%;margin-bottom:10px;">
+      <option value="rock">ROCK</option><option value="metal">METAL</option>
+      <option value="funk">FUNK</option><option value="jazz">JAZZ</option>
+      <option value="blues">BLUES</option><option value="hiphop">HIP HOP</option>
+      <option value="trap">TRAP</option><option value="house">HOUSE</option>
+      <option value="pop">POP</option><option value="reggae">REGGAE</option>
+      <option value="dub">DUB</option><option value="surf">SURF</option>
+      <option value="drill">DRILL</option>
+    </select>
+    <input type="file" id="imageFile" accept="image/*" style="display:none;" onchange="parseImageScore()"/>
+    <div class="btn btn-primary" onclick="document.getElementById('imageFile').click()">UPLOAD SHEET IMAGE</div>
+    <div id="imageStatus" style="margin-top:10px;font-size:12px;color:var(--muted);"></div>
+  </div>
+</div>
 </body>
 </html>
