@@ -36,7 +36,9 @@ ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "bandmate-cloud-secret")
 CORS(app)
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet",
+                    logger=False, engineio_logger=False,
+                    ping_timeout=60, ping_interval=25)
 
 # ── In-memory store (replaces file-based cache on Pi) ─────────────────────────
 _song_cache   = {}   # md5(song_name) → song dict
@@ -188,7 +190,7 @@ def emit_midi_hit(voice, velocity):
         "channel":  9,           # 0-indexed, channel 10
         # Raw MIDI bytes for direct port routing
         "bytes":    [0x99, note, int(velocity)],
-    })
+    }, namespace="/")
 
 # ── Groove engine (in-process, no pygame) ─────────────────────────────────────
 def _vel(rng, center, spread, lo=20, hi=127):
