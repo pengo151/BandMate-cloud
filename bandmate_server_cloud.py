@@ -497,8 +497,8 @@ def api_genre():
 @app.route("/api/artist/browse", methods=["POST"])
 def api_artist_browse():
     data   = request.json or {}
-    artist = data.get("artist", "").strip()
-    genre  = data.get("genre", "").strip()
+    artist = (data.get("artist") or "").strip()
+    genre  = (data.get("genre") or "").strip()
     if not artist:
         return jsonify({"error": "No artist name"}), 400
     genre_hint = f" Focus on {genre} songs." if genre else ""
