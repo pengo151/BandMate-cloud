@@ -710,6 +710,123 @@ def api_import_patterns():
         tmp_path.unlink(missing_ok=True)
 
 
+# ── Vision drum sheet parser ──────────────────────────────────────────────────
+import base64
+
+@app.route("/api/scores/parse-image", methods=["POST"])
+def api_parse_drum_image():
+    """Upload a drum sheet image → Claude vision reads notation → returns patterns."""
+    f = request.files.get("file")
+    if not f:
+        return jsonify({"error": "No image uploaded"}), 400
+
+    genre   = request.form.get("genre", "rock")
+    section = request.form.get("section", "verse")
+
+    # Read image and base64 encode
+    img_bytes   = f.read()
+    img_b64     = base64.standard_b64encode(img_bytes).decode("utf-8")
+    media_type  = f.content_type or "image/png"
+
+    prompt = """You are a drum notation expert. Analyze this drum sheet music image and extract the drum patterns.
+
+For each measure/bar you can see, identify which drums are hit on which 16th-note steps (1-16).
+
+Use these voice names exactly:
+- kick (bass drum, stem down on bottom line)
+- snare (filled notehead on snare line, usually 3rd space)
+- snare_rim (x notehead on snare line = sidestick/rim)
+- hat_closed (x notehead above staff)
+- hat_open (circle-x notehead above staff)
+- hat_pedal (x notehead below staff)
+- ride (x notehead on ride line, higher than hat)
+- crash (x notehead highest line with accent)
+- tom_high (filled notehead top space)
+- tom_mid (filled notehead middle)
+- tom_low (filled notehead lower space)
+
+Return ONLY a JSON object, no markdown, no explanation:
+{
+  "title": "song name if visible or Unknown",
+  "bpm": 120,
+  "time_sig": "4/4",
+  "sections": {
+    "verse": [
+      {
+        "K":  [1,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,0,0],
+        "S":  [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
+        "H":  [1,0,1,0, 1,0,1,0, 1,0,1,0, 1,0,1,0]
+      }
+    ],
+    "chorus": [...]
+  }
+}
+
+Each array has 16 values (16th notes per bar). 1=hit, 0=rest.
+If you see section labels (Verse, Chorus, Bridge etc) use those as keys.
+If no labels visible, put everything under "verse".
+Include up to 4 representative bars per section — pick the most common/repeated patterns.
+Keys: K=kick, S=snare, SR=snare_rim, H=hat_closed, OH=hat_open, R=ride, C=crash, T=tom_high, TM=tom_mid, TL=tom_low"""
+
+    try:
+        client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
+        msg = client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=4000,
+            messages=[{
+                "role": "user",
+                "content": [
+                    {
+                        "type": "image",
+                        "source": {
+                            "type":       "base64",
+                            "media_type": media_type,
+                            "data":       img_b64,
+                        }
+                    },
+                    {"type": "text", "text": prompt}
+                ]
+            }]
+        )
+
+        raw = msg.content[0].text.strip()
+        if raw.startswith("```"):
+            raw = raw.split("```")[1]
+            if raw.startswith("json"):
+                raw = raw[4:]
+        raw = raw.strip()
+
+        parsed = json.loads(raw)
+        sections = parsed.get("sections", {})
+        if not sections:
+            return jsonify({"error": "No patterns found in image"}), 400
+
+        # Store in memory for groove engine
+        global _song_cache
+        title = parsed.get("title", "Imported Score")
+        _song_cache[f"__imported_{genre}"] = {
+            "genre":    genre,
+            "title":    title,
+            "bpm":      parsed.get("bpm", 120),
+            "time_sig": parsed.get("time_sig", "4/4"),
+            "patterns": sections,
+        }
+
+        return jsonify({
+            "ok":       True,
+            "title":    title,
+            "bpm":      parsed.get("bpm", 120),
+            "time_sig": parsed.get("time_sig", "4/4"),
+            "genre":    genre,
+            "sections": {k: len(v) for k, v in sections.items()},
+        })
+
+    except json.JSONDecodeError as e:
+        return jsonify({"error": f"Could not parse notation: {str(e)}", "raw": raw[:200]}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 # ── PWA routes ────────────────────────────────────────────────────────────────
 @app.route("/manifest.json")
 def manifest():

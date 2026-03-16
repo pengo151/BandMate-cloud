@@ -834,6 +834,36 @@ body{
     <div id="importStatus" style="margin-top:10px;font-size:12px;color:var(--muted);"></div>
   </div>
 
+  <div class="np-section" style="margin-top:12px;">
+    <div class="slabel">📸 SCAN DRUM SHEET IMAGE</div>
+    <div style="margin-bottom:8px;color:var(--muted);font-size:11px;">
+      Screenshot or photo of drum notation — Claude reads it and extracts patterns.
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
+      <select id="imageGenre" class="retro-select" style="flex:1;">
+        <option value="rock">ROCK</option>
+        <option value="metal">METAL</option>
+        <option value="funk">FUNK</option>
+        <option value="jazz">JAZZ</option>
+        <option value="blues">BLUES</option>
+        <option value="hiphop">HIP HOP</option>
+        <option value="trap">TRAP</option>
+        <option value="house">HOUSE</option>
+        <option value="pop">POP</option>
+        <option value="reggae">REGGAE</option>
+        <option value="dub">DUB</option>
+        <option value="surf">SURF</option>
+        <option value="drill">DRILL</option>
+      </select>
+    </div>
+    <input type="file" id="imageFile" accept="image/*"
+           style="display:none;" onchange="parseImageScore()"/>
+    <div class="btn btn-primary" onclick="document.getElementById('imageFile').click()">
+      📸 UPLOAD SHEET IMAGE
+    </div>
+    <div id="imageStatus" style="margin-top:10px;font-size:12px;color:var(--muted);"></div>
+  </div>
+
 </div>
 
 <div class="toast" id="toast"></div>
@@ -902,6 +932,36 @@ async function searchScores() {
       `<div style="color:var(--muted);font-size:10px;margin-top:6px;">${data.tip}</div>`;
   } catch(e) {
     el.innerHTML = `<div style="color:var(--red)">Error: ${e.message}</div>`;
+  }
+}
+
+async function parseImageScore() {
+  const file = document.getElementById('imageFile').files[0];
+  if (!file) return;
+  const genre  = document.getElementById('imageGenre').value;
+  const status = document.getElementById('imageStatus');
+  status.style.color = 'var(--muted)';
+  status.textContent = `📸 Reading notation from ${file.name}... (this takes a few seconds)`;
+
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('genre', genre);
+
+  try {
+    const r = await fetch('/api/scores/parse-image', {method:'POST', body: fd});
+    const data = await r.json();
+    if (data.error) {
+      status.style.color = 'var(--red)';
+      status.textContent = '❌ ' + data.error;
+      return;
+    }
+    const sections = Object.entries(data.sections).map(([k,v]) => `${k}:${v}`).join(' ');
+    status.style.color = 'var(--green)';
+    status.textContent = `✅ "${data.title}" → ${genre.toUpperCase()} [${sections}] @ ${data.bpm}BPM`;
+    showToast('Drum patterns loaded from image!');
+  } catch(e) {
+    status.style.color = 'var(--red)';
+    status.textContent = '❌ ' + e.message;
   }
 }
 
