@@ -879,7 +879,6 @@ async function parseImageScore() {
     if (data.error) { status.style.color='var(--red)'; status.textContent='ERROR: '+data.error; return; }
     const sections = Object.entries(data.sections).map(([k,v]) => k+':'+v).join(' ');
     status.style.color = 'var(--green)';
-    status.innerHTML = 'OK: "' + data.title + '" [' + sections + '] @ ' + data.bpm + 'BPM' +
     status.textContent = 'OK: ' + data.title + ' @ ' + data.bpm + 'BPM';
     window._lastImportGenre = data.genre;
     window._lastImportBpm = data.bpm;
