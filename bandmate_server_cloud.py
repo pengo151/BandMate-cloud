@@ -868,7 +868,7 @@ def manifest():
 @app.route("/sw.js")
 def sw():
     js = """
-const CACHE = 'bandmate-cloud-v1';
+const CACHE = 'bandmate-cloud-v2';
 const ASSETS = ['/'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
