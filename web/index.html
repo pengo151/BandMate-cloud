@@ -880,7 +880,10 @@ async function parseImageScore() {
     const sections = Object.entries(data.sections).map(([k,v]) => k+':'+v).join(' ');
     status.style.color = 'var(--green)';
     status.innerHTML = 'OK: "' + data.title + '" [' + sections + '] @ ' + data.bpm + 'BPM' +
-      '<div style="margin-top:10px;"><div class="btn btn-primary" onclick="playImported('' + data.genre + '',' + data.bpm + ')">PLAY IMPORTED</div></div>';
+    status.textContent = 'OK: ' + data.title + ' @ ' + data.bpm + 'BPM';
+    window._lastImportGenre = data.genre;
+    window._lastImportBpm = data.bpm;
+    document.getElementById('playImportedBtn').style.display = 'block';
     toast('PATTERNS LOADED!');
   } catch(e) { status.style.color='var(--red)'; status.textContent='ERROR: '+e.message; }
 }
@@ -932,6 +935,9 @@ async function playImported(genre, bpm) {
     </select>
     <input type="file" id="imageFile" accept="image/*" style="display:none;" onchange="parseImageScore()"/>
     <div class="btn btn-primary" onclick="document.getElementById('imageFile').click()">UPLOAD SHEET IMAGE</div>
+    <div id="playImportedBtn" style="display:none;margin-top:10px;">
+      <div class="btn btn-success" onclick="playImported(window._lastImportGenre, window._lastImportBpm)">PLAY IMPORTED PATTERNS</div>
+    </div>
     <div id="imageStatus" style="margin-top:10px;font-size:12px;color:var(--muted);"></div>
   </div>
 </div>
